@@ -143,7 +143,7 @@ function ShelfProduct({
                         />
                     </div>
                 )}
-                <div className="relative z-10">
+                <div className="relative z-10 group/product">
                     <ProductPlaceholder
                         type={shape.type}
                         chipVariant={shape.chipVariant}
@@ -152,6 +152,25 @@ function ShelfProduct({
                         highlighted={isContextHighlighted || isSearchResult}
                         imageUrl={product.image}
                     />
+                    {/* Instant Add to Cart Plus Button */}
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            dispatch({
+                                type: "ADD_ITEM",
+                                payload: {
+                                    name: product.name,
+                                    category: product.category,
+                                    quantity: 1,
+                                    unit: product.quantity || "1 pc"
+                                }
+                            });
+                        }}
+                        className="absolute -bottom-1 -right-1 z-50 bg-emerald-500 hover:bg-emerald-400 text-white w-6 h-6 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-110 active:scale-95 opacity-90 sm:opacity-0 sm:group-hover/product:opacity-100 border-2 border-white/20 dark:border-[#080b11]"
+                        title="Add to cart"
+                    >
+                        <Plus className="w-3.5 h-3.5 stroke-[3]" />
+                    </button>
                 </div>
             </div>
             {isHovered && (

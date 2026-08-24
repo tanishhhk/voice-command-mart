@@ -78,7 +78,7 @@ export const ShoppingList = () => {
 
       <div className="bg-sky-100 dark:bg-[#3E2723] rounded-2xl border border-sky-200 dark:border-amber-700 overflow-hidden shadow-lg p-4 sm:p-6">
         <div className="border-b border-sky-200 dark:border-amber-700 pb-3 sm:pb-4 mb-3 sm:mb-4">
-          <h3 className="font-bold text-lg sm:text-xl text-amber-950 dark:text-[#E1F5FE] tracking-wide">Shopping Bill</h3>
+          <h3 className="font-bold text-lg sm:text-xl text-amber-950 dark:text-[#E1F5FE] tracking-wide">Shopping List</h3>
         </div>
         
         <ul className="space-y-3 sm:space-y-4">
@@ -102,9 +102,29 @@ export const ShoppingList = () => {
                 
                 <div className="flex flex-col min-w-0">
                   <div className="flex flex-wrap items-baseline gap-1 sm:gap-2">
-                    <span className={`font-semibold text-sm sm:text-base md:text-lg text-amber-950 dark:text-[#E1F5FE] truncate ${item.isPurchased ? 'line-through' : ''}`}>
-                      {item.name}
-                    </span>
+                    {product && products.filter(p => p.category === product.category).length > 1 ? (
+                      <select 
+                        value={item.name}
+                        onChange={(e) => {
+                          const newProduct = products.find(p => p.name === e.target.value);
+                          if (newProduct) {
+                            dispatch({ type: 'REMOVE_ITEM', payload: item.name });
+                            dispatch({ type: 'ADD_ITEM', payload: { name: newProduct.name, category: newProduct.category, quantity: item.quantity, unit: item.unit } });
+                          }
+                        }}
+                        className={`font-semibold text-sm sm:text-base md:text-lg text-amber-950 dark:text-[#E1F5FE] bg-transparent border-b border-dashed border-amber-950/30 dark:border-[#E1F5FE]/30 focus:outline-none focus:border-emerald-500 cursor-pointer truncate max-w-[150px] sm:max-w-[200px] ${item.isPurchased ? 'line-through opacity-70' : ''}`}
+                      >
+                        {products.filter(p => p.category === product.category).map(alt => (
+                          <option key={alt.id} value={alt.name} className="text-gray-900 bg-white dark:bg-gray-800 dark:text-white">
+                            {alt.name}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <span className={`font-semibold text-sm sm:text-base md:text-lg text-amber-950 dark:text-[#E1F5FE] truncate ${item.isPurchased ? 'line-through' : ''}`}>
+                        {item.name}
+                      </span>
+                    )}
                     <span className="text-amber-800/70 dark:text-sky-200/70 text-xs sm:text-sm font-medium">
                       x {item.quantity === 1 && item.unit.startsWith('1 ') ? item.unit : `${item.quantity} ${item.unit}`}
                     </span>

@@ -83,12 +83,7 @@ export default function ProductHoverCard({
                     </div>
                 </div>
 
-                {/* Action Button */}
-                <button className="mt-0.5 w-full flex items-center justify-center gap-1.5 bg-[#141b2b] hover:bg-[#2563eb] text-gray-200 hover:text-white transition-all duration-200 py-1.5 sm:py-2 rounded-lg text-[11px] sm:text-xs font-semibold border border-white/10 hover:border-[#3b82f6] shadow-sm">
-                    <ShoppingCart size={13} />
-                    Add to Cart
-                </button>
-                
+
                 {/* Desktop Pointer Arrow: Right arrow if align=left, Left arrow if align=right */}
                 {isLeft ? (
                     <div 

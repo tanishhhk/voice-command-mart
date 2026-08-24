@@ -51,7 +51,7 @@ export default function CartDrawer() {
           ) : (
             <div className="bg-[#E1F5FE] dark:bg-[#3E2723] rounded-2xl border border-[#B3E5FC] dark:border-[#3E2723] overflow-hidden shadow-lg p-4 sm:p-6">
               <div className="border-b border-[#B3E5FC] dark:border-[#3E2723] pb-3 sm:pb-4 mb-3 sm:mb-4">
-                <h3 className="font-bold text-lg sm:text-xl text-[#3E2723] dark:text-[#E1F5FE] tracking-wide">Shopping Bill</h3>
+                <h3 className="font-bold text-lg sm:text-xl text-[#3E2723] dark:text-[#E1F5FE] tracking-wide">Shopping List</h3>
               </div>
               
               <ul className="space-y-3 sm:space-y-4">
@@ -63,9 +63,29 @@ export default function CartDrawer() {
                     <li key={index} className="flex items-center justify-between gap-2 group">
                       <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
                         <div className="flex flex-col min-w-0">
-                          <span className="font-semibold text-sm sm:text-base md:text-lg text-[#3E2723] dark:text-[#E1F5FE] truncate">
-                            {item.name}
-                          </span>
+                          {product && products.filter(p => p.category === product.category).length > 1 ? (
+                            <select 
+                              value={item.name}
+                              onChange={(e) => {
+                                const newProduct = products.find(p => p.name === e.target.value);
+                                if (newProduct) {
+                                  dispatch({ type: 'REMOVE_ITEM', payload: item.name });
+                                  dispatch({ type: 'ADD_ITEM', payload: { name: newProduct.name, category: newProduct.category, quantity: item.quantity, unit: item.unit } });
+                                }
+                              }}
+                              className="font-semibold text-sm sm:text-base md:text-lg text-[#3E2723] dark:text-[#E1F5FE] bg-transparent border-b border-dashed border-[#3E2723]/30 dark:border-[#E1F5FE]/30 focus:outline-none focus:border-emerald-500 cursor-pointer truncate max-w-[150px] sm:max-w-[200px]"
+                            >
+                              {products.filter(p => p.category === product.category).map(alt => (
+                                <option key={alt.id} value={alt.name} className="text-gray-900 bg-white dark:bg-gray-800 dark:text-white">
+                                  {alt.name}
+                                </option>
+                              ))}
+                            </select>
+                          ) : (
+                            <span className="font-semibold text-sm sm:text-base md:text-lg text-[#3E2723] dark:text-[#E1F5FE] truncate">
+                              {item.name}
+                            </span>
+                          )}
                           <span className="text-amber-800/70 dark:text-[#E1F5FE]/70 text-xs sm:text-sm font-medium">
                             {item.quantity} {item.unit || (product?.quantity && !product.quantity.includes('1') ? product.quantity : '')}
                           </span>
