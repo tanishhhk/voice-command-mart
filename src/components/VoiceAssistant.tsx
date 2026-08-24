@@ -140,7 +140,7 @@ export const VoiceAssistant = () => {
       `}</style>
 
       {/* ── Main Hero Row: Mic + Search Bar ─────────────────────── */}
-      <div className="w-full flex flex-col sm:flex-row items-center sm:items-start lg:items-center gap-6 lg:gap-8">
+      <div className="w-full flex flex-col sm:flex-row items-center sm:items-start lg:items-center justify-center gap-10 lg:gap-16">
         
         {/* ── LEFT: The Continuous RGB Orbit Mic ─────────────────── */}
         <div className="flex flex-col items-center flex-shrink-0">

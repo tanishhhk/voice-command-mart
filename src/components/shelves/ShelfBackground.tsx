@@ -746,20 +746,10 @@ export default function ShelfBackground() {
 
     return (
         <div className="w-full px-2 sm:px-4 md:px-6 pt-2 pb-24 box-border max-w-full">
-            {/* ── TOP HERO SECTION: Mic + Search Bar + Transitioning Offer Card ── */}
-            <div className="w-full mb-6 sm:mb-8 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-6">
-                {/* Left & Center: Mic + Command Center */}
-                <div className="flex-1 w-full min-w-0">
+            {/* ── TOP HERO SECTION: Mic + Command Center ── */}
+            <div className="w-full mb-6 sm:mb-8 flex justify-center">
+                <div className="w-full max-w-5xl">
                     <VoiceAssistant />
-                </div>
-
-                {/* Right: Transitioning Offer Banner Card / Shopping List */}
-                <div className="w-full lg:w-[520px] xl:w-[580px] flex-shrink-0">
-                    {state.items.length > 0 ? (
-                        <ShoppingList />
-                    ) : (
-                        <OffersBanner />
-                    )}
                 </div>
             </div>
 
