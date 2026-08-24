@@ -24,8 +24,8 @@ export const useSpeechRecognition = (
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (SpeechRecognition) {
         const recog = new SpeechRecognition();
-        recog.continuous = true; // Stay on continuously
-        recog.interimResults = true; // Give live feedback
+        recog.continuous = false; // Stop when user finishes phrase to prevent stuck loops
+        recog.interimResults = true; // Real-time feedback
         recog.lang = language;
 
         recog.onstart = () => {
@@ -45,19 +45,20 @@ export const useSpeechRecognition = (
             }
           }
 
+          setTranscript(interimTranscript || finalTranscript);
+
           if (finalTranscript.trim()) {
-            // Trigger the callback for real-time processing
             if (onCommand) {
               onCommand(finalTranscript.trim());
             }
           }
-
-          setTranscript(interimTranscript || finalTranscript);
         };
 
         recog.onerror = (event: any) => {
-          console.error("Speech recognition error", event.error);
-          setError(event.error);
+          if (event.error !== 'no-speech') {
+            console.error("Speech recognition error", event.error);
+            setError(event.error === 'not-allowed' ? 'Microphone permission denied' : event.error);
+          }
           setIsListening(false);
         };
 
@@ -75,17 +76,23 @@ export const useSpeechRecognition = (
   const startListening = useCallback(() => {
     if (recognition) {
       setTranscript('');
+      setError(null);
       try {
         recognition.start();
       } catch (e) {
-        console.warn("Recognition already started", e);
+        console.warn("Recognition already running", e);
       }
     }
   }, [recognition]);
 
   const stopListening = useCallback(() => {
     if (recognition) {
-      recognition.stop();
+      try {
+        recognition.stop();
+      } catch (e) {
+        // Ignore
+      }
+      setIsListening(false);
     }
   }, [recognition]);
 

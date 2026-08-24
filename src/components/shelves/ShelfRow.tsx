@@ -13,42 +13,42 @@ interface ShelfRowProps {
 
 export default function ShelfRow({ label, icon, children, height = 160, hasLight = false }: ShelfRowProps) {
     return (
-        <div className="w-full" style={{ marginBottom: 24 }}>
+        <div className="w-full mb-4 sm:mb-6">
             {/* Section label row */}
             {label && (
-                <div className="flex items-center justify-center px-3 py-2">
-                    <div className="flex items-center gap-3">
+                <div className="flex items-center justify-center px-2 py-1.5 sm:py-2">
+                    <div className="flex items-center gap-2 sm:gap-3">
                         {/* Decorative line left */}
-                        <div style={{ width: 40, height: 2, background: "linear-gradient(90deg, transparent, #8a735c)", borderRadius: 2 }} />
+                        <div className="w-6 sm:w-10 h-0.5 rounded-full" style={{ background: "linear-gradient(90deg, transparent, #8a735c)" }} />
                         <p className={montserrat.className} style={{
                             color: "var(--section-title-color)",
-                            fontSize: 16,
+                            fontSize: "clamp(12px, 3.5vw, 16px)",
                             letterSpacing: "0.15em",
                             fontWeight: 800,
                             margin: 0,
                             textTransform: "uppercase",
                             textShadow: "var(--text-shadow, 0px 1px 2px rgba(255,255,255,0.5))"
                         }}>
+                            {icon && <span className="mr-1.5">{icon}</span>}
                             {label}
                         </p>
                         {/* Decorative line right */}
-                        <div style={{ width: 40, height: 2, background: "linear-gradient(270deg, transparent, #8a735c)", borderRadius: 2 }} />
+                        <div className="w-6 sm:w-10 h-0.5 rounded-full" style={{ background: "linear-gradient(270deg, transparent, #8a735c)" }} />
                     </div>
                 </div>
             )}
 
             {/* Shelf unit — dynamic width wrapper */}
-            <div className="relative w-full flex justify-center" style={{ overflow: "visible" }}>
-                <div style={{ display: "inline-flex", flexDirection: "column", position: "relative" }}>
+            <div className="relative w-full flex justify-center max-w-full py-1">
+                <div style={{ display: "inline-flex", flexDirection: "column", position: "relative", minWidth: "min-content", maxWidth: "100%" }}>
                     {/* Products layer — statically positioned so it dictates the width */}
                     <div
+                        className="px-2 sm:px-6 md:px-10"
                         style={{
                             height, // height of the shelf space
                             display: "flex",
                             alignItems: "flex-end",
                             justifyContent: "center",
-                            paddingLeft: 40, // Extend shelf past products slightly
-                            paddingRight: 40,
                             // push down so product bottoms sit exactly on shelf surface
                             marginBottom: -14,
                             position: "relative",
@@ -58,7 +58,7 @@ export default function ShelfRow({ label, icon, children, height = 160, hasLight
                     </div>
 
                 {/* Shelf plank — Dynamic theming with proper 3D slab shape */}
-                <div style={{ position: "relative", zIndex: 20 }}>
+                <div style={{ position: "relative", zIndex: 20, width: "100%" }}>
                     {/* Top surface */}
                     <div style={{
                         height: 8,

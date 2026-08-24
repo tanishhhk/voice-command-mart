@@ -1,40 +1,82 @@
 import { Product } from "@/types/product";
 import { ShoppingCart } from "lucide-react";
 
-export default function ProductHoverCard({ product }: { product: Product }) {
+interface ProductHoverCardProps {
+    product: Product;
+    align?: "left" | "right" | "top";
+    isTopRow?: boolean;
+    isBottomRow?: boolean;
+}
+
+export default function ProductHoverCard({ 
+    product, 
+    align = "right", 
+    isTopRow = false, 
+    isBottomRow = false 
+}: ProductHoverCardProps) {
+    const isLeft = align === "left";
+
+    // Vertical positioning for desktop
+    let desktopVertical = "sm:top-1/2 sm:-translate-y-1/2";
+    let arrowVertical = "sm:top-1/2 sm:-translate-y-1/2";
+
+    if (isTopRow) {
+        desktopVertical = "sm:top-0 sm:translate-y-0";
+        arrowVertical = "sm:top-6 sm:translate-y-0";
+    } else if (isBottomRow) {
+        desktopVertical = "sm:bottom-0 sm:top-auto sm:translate-y-0";
+        arrowVertical = "sm:bottom-6 sm:top-auto sm:translate-y-0";
+    }
+
+    // Mobile positioning: top row opens below product, otherwise opens above
+    const mobileVertical = isTopRow 
+        ? "top-[105%] bottom-auto" 
+        : "bottom-[105%] top-auto";
+
     return (
         <div
-            className="absolute z-50 left-[100%] ml-4 top-1/2 -translate-y-1/2 w-52 pointer-events-none"
+            className={`
+                absolute z-[200] pointer-events-none w-48 sm:w-56
+                /* Mobile positioning: */
+                ${mobileVertical} left-1/2 -translate-x-1/2
+                /* Desktop horizontal: */
+                ${isLeft 
+                    ? "sm:right-[100%] sm:left-auto sm:translate-x-0 sm:mr-3.5" 
+                    : "sm:left-[100%] sm:right-auto sm:translate-x-0 sm:ml-3.5"
+                }
+                /* Desktop vertical: */
+                ${desktopVertical}
+            `}
             style={{
-                animation: "fadeSlideRight 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+                animation: "fadeSlideHover 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards",
             }}
         >
             <style>{`
-                @keyframes fadeSlideRight {
-                    from { opacity: 0; transform: translate(-10px, -50%); }
-                    to { opacity: 1; transform: translate(0, -50%); }
+                @keyframes fadeSlideHover {
+                    from { opacity: 0; transform: scale(0.92); }
+                    to { opacity: 1; transform: scale(1); }
                 }
             `}</style>
 
             <div
-                className="bg-[#0a0c10] border border-[#2f7cff]/30 rounded-xl p-3.5 flex flex-col gap-2.5 pointer-events-auto shadow-[0_8px_32px_rgba(0,0,0,0.6),0_0_20px_rgba(47,124,255,0.15)] relative"
+                className="bg-[#080b11]/95 backdrop-blur-md border border-[#2f7cff]/40 rounded-xl p-3 sm:p-3.5 flex flex-col gap-2 pointer-events-auto shadow-[0_16px_40px_rgba(0,0,0,0.95),0_0_24px_rgba(47,124,255,0.25)] relative"
             >
                 {/* Header */}
                 <div>
-                    <h4 className="text-gray-100 font-semibold text-sm leading-tight">
+                    <h4 className="text-gray-100 font-semibold text-xs sm:text-sm leading-tight line-clamp-2">
                         {product.name}
                     </h4>
-                    <p className="text-gray-400 text-xs mt-0.5">{product.brand}</p>
+                    <p className="text-gray-400 text-[11px] sm:text-xs mt-0.5">{product.brand}</p>
                 </div>
 
                 {/* Price & Quantity */}
                 <div className="flex justify-between items-end">
                     <div>
-                        <span className="text-[#2f7cff] font-bold text-lg">
+                        <span className="text-[#3b82f6] font-bold text-base sm:text-lg">
                             ₹{product.price.toFixed(2)}
                         </span>
                         {product.quantity && (
-                            <span className="text-gray-500 text-[11px] ml-1.5 font-medium uppercase tracking-wider">
+                            <span className="text-gray-400 text-[10px] sm:text-[11px] ml-1.5 font-medium uppercase tracking-wider">
                                 {product.quantity}
                             </span>
                         )}
@@ -42,15 +84,32 @@ export default function ProductHoverCard({ product }: { product: Product }) {
                 </div>
 
                 {/* Action Button */}
-                <button className="mt-1 w-full flex items-center justify-center gap-2 bg-[#121824] hover:bg-[#2f7cff] text-gray-300 hover:text-white transition-all duration-300 py-2 rounded-lg text-xs font-semibold border border-white/5 hover:border-[#2f7cff] hover:shadow-[0_0_12px_rgba(47,124,255,0.4)]">
-                    <ShoppingCart size={14} />
+                <button className="mt-0.5 w-full flex items-center justify-center gap-1.5 bg-[#141b2b] hover:bg-[#2563eb] text-gray-200 hover:text-white transition-all duration-200 py-1.5 sm:py-2 rounded-lg text-[11px] sm:text-xs font-semibold border border-white/10 hover:border-[#3b82f6] shadow-sm">
+                    <ShoppingCart size={13} />
                     Add to Cart
                 </button>
                 
-                {/* Pointer Arrow */}
-                <div 
-                    className="absolute top-1/2 -translate-y-1/2 -left-[6px] w-3 h-3 bg-[#0a0c10] border-l border-b border-[#2f7cff]/30 rotate-45"
-                />
+                {/* Desktop Pointer Arrow: Right arrow if align=left, Left arrow if align=right */}
+                {isLeft ? (
+                    <div 
+                        className={`hidden sm:block absolute ${arrowVertical} -right-[6px] w-3 h-3 bg-[#080b11] border-r border-t border-[#2f7cff]/40 rotate-45`}
+                    />
+                ) : (
+                    <div 
+                        className={`hidden sm:block absolute ${arrowVertical} -left-[6px] w-3 h-3 bg-[#080b11] border-l border-b border-[#2f7cff]/40 rotate-45`}
+                    />
+                )}
+
+                {/* Mobile Pointer Arrow */}
+                {isTopRow ? (
+                    <div 
+                        className="block sm:hidden absolute -top-[6px] left-1/2 -translate-x-1/2 w-3 h-3 bg-[#080b11] border-l border-t border-[#2f7cff]/40 rotate-45"
+                    />
+                ) : (
+                    <div 
+                        className="block sm:hidden absolute -bottom-[6px] left-1/2 -translate-x-1/2 w-3 h-3 bg-[#080b11] border-r border-b border-[#2f7cff]/40 rotate-45"
+                    />
+                )}
             </div>
         </div>
     );

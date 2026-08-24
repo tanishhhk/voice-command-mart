@@ -34,6 +34,7 @@ const LANGUAGES = [
 import { X } from "lucide-react";
 
 function SearchResultsPopup({ term, isVisible, onClose }: { term: string; isVisible: boolean; onClose: () => void }) {
+    const { dispatch } = useShopping();
     if (!isVisible || !term) return null;
 
     const filtered = products.filter(p => 
@@ -41,29 +42,49 @@ function SearchResultsPopup({ term, isVisible, onClose }: { term: string; isVisi
         p.category.toLowerCase().includes(term.toLowerCase())
     ).slice(0, 8);
 
+    const handleSelectProduct = (product: typeof products[0]) => {
+        dispatch({
+            type: "ADD_ITEM",
+            payload: { name: product.name, quantity: 1, unit: product.quantity || "1 pc" }
+        });
+        onClose();
+    };
+
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
-            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-            <div className="relative w-full max-w-4xl max-h-[80vh] overflow-y-auto bg-white dark:bg-gray-900 rounded-3xl shadow-2xl animate-in fade-in zoom-in duration-200 p-8 border border-gray-200 dark:border-gray-800">
-                <button onClick={onClose} className="absolute top-6 right-6 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 transition-colors">
-                    <X size={24} />
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6">
+            <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+            <div className="relative w-full max-w-4xl max-h-[85vh] overflow-y-auto bg-white dark:bg-gray-900 rounded-2xl sm:rounded-3xl shadow-2xl animate-in fade-in zoom-in duration-200 p-4 sm:p-8 border border-gray-200 dark:border-gray-800">
+                <button onClick={onClose} className="absolute top-4 right-4 sm:top-6 sm:right-6 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 transition-colors">
+                    <X size={20} className="sm:w-6 sm:h-6" />
                 </button>
-                <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100 pr-12">
+                <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-gray-900 dark:text-gray-100 pr-10 sm:pr-12">
                     Search Results for &quot;{term}&quot;
                 </h2>
                 
                 {filtered.length > 0 ? (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
                         {filtered.map(product => (
-                            <div key={product.id} className="group relative flex flex-col items-center p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/50 border border-transparent hover:border-emerald-500/30 transition-all cursor-pointer">
-                                <img src={product.image} alt={product.name} className="w-24 h-24 object-contain mb-4 group-hover:scale-110 transition-transform" />
-                                <h3 className="text-sm font-semibold text-center mb-1 text-gray-900 dark:text-gray-100">{product.name}</h3>
-                                <p className="text-emerald-600 font-bold">₹{product.price}</p>
+                            <div 
+                                key={product.id} 
+                                onClick={() => handleSelectProduct(product)}
+                                className="group relative flex flex-col items-center p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-gray-50 dark:bg-gray-800/50 border border-transparent hover:border-emerald-500/40 hover:shadow-lg transition-all cursor-pointer"
+                            >
+                                <img 
+                                    src={product.image} 
+                                    alt={product.name} 
+                                    loading="lazy"
+                                    className="w-16 h-16 sm:w-24 sm:h-24 object-contain mb-2 sm:mb-4 group-hover:scale-110 transition-transform" 
+                                />
+                                <h3 className="text-xs sm:text-sm font-semibold text-center mb-1 text-gray-900 dark:text-gray-100 line-clamp-2">{product.name}</h3>
+                                <p className="text-emerald-600 font-bold text-xs sm:text-sm">₹{product.price}</p>
+                                <span className="mt-2 text-[10px] text-emerald-600 dark:text-emerald-400 font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                                    Click to Add
+                                </span>
                             </div>
                         ))}
                     </div>
                 ) : (
-                    <div className="py-12 text-center text-gray-500 text-lg">
+                    <div className="py-8 sm:py-12 text-center text-gray-500 text-base sm:text-lg">
                         No products found matching &quot;{term}&quot;
                     </div>
                 )}
@@ -78,6 +99,8 @@ export default function Navbar() {
     const { toggleCart, dispatch, state } = useShopping();
     const [searchTerm, setSearchTerm] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const totalCartCount = state.items.reduce((sum, item) => sum + item.quantity, 0);
 
     // Sync input with search query from voice commands
     useEffect(() => {
@@ -132,82 +155,75 @@ export default function Navbar() {
     };
 
     return (
-        <header className="w-full px-12 pt-8 pb-5 flex items-center justify-between relative z-50">
-            {/* Left */}
-            <div>
-                <h1 className="text-4xl font-bold tracking-tight transition-colors flex items-center">
-                    <span style={{ color: "var(--ration-color)" }}>राशन</span>
-                    <span style={{ color: "var(--house-color)" }}>House</span>
-                </h1>
-                <p className="text-sm transition-colors" style={{ color: "var(--subtitle-color)" }}>
-                    Voice Shopping Assistant
-                </p>
-            </div>
-
-            {/* Middle: Search Bar */}
-            <div className="w-80 mx-8 relative">
-                <div className="relative group">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Search size={20} className="text-gray-500 dark:text-gray-400 group-focus-within:text-emerald-500 transition-colors" />
-                    </div>
-                    <input
-                        type="text"
-                        value={searchTerm}
-                        onChange={handleSearch}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter' && searchTerm) {
-                                setIsModalOpen(true);
-                            }
-                        }}
-                        placeholder="Search products..."
-                        className="w-full pl-10 pr-4 py-2.5 rounded-2xl border-2 border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:outline-none focus:border-emerald-500 dark:focus:border-emerald-500 transition-all text-base font-medium text-gray-900 dark:text-gray-100 shadow-sm"
-                    />
+        <header className="w-full px-3 sm:px-6 md:px-12 pt-4 sm:pt-6 pb-2 sm:pb-3 relative z-50">
+            <div className="flex items-center justify-between gap-y-3">
+                {/* Brand / Logo */}
+                <div className="flex-shrink-0">
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight transition-colors flex items-center">
+                        <span style={{ color: "var(--ration-color)" }}>राशन</span>
+                        <span style={{ color: "var(--house-color)" }}>House</span>
+                    </h1>
+                    <p className="text-xs sm:text-sm transition-colors" style={{ color: "var(--subtitle-color)" }}>
+                        Voice Shopping Assistant
+                    </p>
                 </div>
-                <SearchResultsPopup term={searchTerm} isVisible={isModalOpen} onClose={() => setIsModalOpen(false)} />
-            </div>
 
-            {/* Right */}
-            <div className="flex items-center gap-8">
-                <button onClick={toggleTheme} className="flex flex-col items-center gap-1 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition">
-                    {isDark ? <Sun size={22} /> : <Moon size={22} />}
-                    <span className="text-xs font-medium">{isDark ? "Light" : "Dark"}</span>
-                </button>
-                
-                <NavItem icon={<ShoppingCart size={22} />} label="Cart" onClick={toggleCart} />
-
-                <div className="flex flex-col items-center gap-1 text-gray-600 dark:text-gray-400">
-                    <Globe size={22} className="pointer-events-none" />
-                    <select 
-                        value={selectedLang}
-                        onChange={(e) => handleLanguageChange(e.target.value)}
-                        className="bg-transparent text-xs outline-none cursor-pointer hover:text-gray-900 dark:hover:text-gray-100 transition font-medium appearance-none text-center"
-                        style={{ textAlignLast: "center" }}
+                {/* Actions (Right) */}
+                <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
+                    {/* Theme Toggle */}
+                    <button 
+                        onClick={toggleTheme} 
+                        aria-label="Toggle theme"
+                        className="flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-white/95 dark:bg-gray-800/95 text-gray-900 dark:text-gray-100 font-bold text-xs sm:text-sm shadow-sm border border-gray-300 dark:border-gray-700 hover:border-emerald-500 dark:hover:border-emerald-400 hover:scale-105 active:scale-95 transition-all"
                     >
-                        {LANGUAGES.map(lang => (
-                            <option key={lang.code} value={lang.code} className="text-black dark:text-black">
-                                {lang.name}
-                            </option>
-                        ))}
-                    </select>
+                        {isDark ? (
+                            <Sun size={17} className="text-amber-500 fill-amber-500" />
+                        ) : (
+                            <Moon size={17} className="text-indigo-600 fill-indigo-600" />
+                        )}
+                        <span className="hidden sm:inline font-semibold">{isDark ? "Light" : "Dark"}</span>
+                    </button>
+                    
+                    {/* Cart Button */}
+                    <button 
+                        onClick={toggleCart} 
+                        aria-label="View Cart"
+                        className="relative flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm shadow-md hover:scale-105 active:scale-95 transition-all"
+                    >
+                        <ShoppingCart size={17} className="text-white" />
+                        <span className="font-bold">Cart</span>
+                        {totalCartCount > 0 && (
+                            <span className="ml-1 bg-white text-emerald-700 text-[11px] font-black rounded-full h-5 min-w-5 px-1.5 flex items-center justify-center shadow-sm">
+                                {totalCartCount > 99 ? '99+' : totalCartCount}
+                            </span>
+                        )}
+                    </button>
+
+                    {/* Language Selector */}
+                    <div className="relative flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl bg-white/95 dark:bg-gray-800/95 text-gray-900 dark:text-gray-100 font-bold text-xs sm:text-sm shadow-sm border border-gray-300 dark:border-gray-700 hover:border-emerald-500 transition-all">
+                        <Globe size={17} className="text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+                        <select 
+                            value={selectedLang}
+                            aria-label="Select language"
+                            onChange={(e) => handleLanguageChange(e.target.value)}
+                            className="bg-transparent text-xs sm:text-sm outline-none cursor-pointer text-gray-900 dark:text-gray-100 font-bold appearance-none pr-3"
+                        >
+                            {LANGUAGES.map(lang => (
+                                <option key={lang.code} value={lang.code} className="text-black bg-white dark:bg-gray-900 dark:text-gray-100">
+                                    {lang.name}
+                                </option>
+                            ))}
+                        </select>
+                        <span className="pointer-events-none absolute right-2 text-gray-600 dark:text-gray-400 text-[9px]">▼</span>
+                    </div>
                 </div>
             </div>
-        </header>
-    );
-}
 
-function NavItem({
-    icon,
-    label,
-    onClick,
-}: {
-    icon: React.ReactNode;
-    label: string;
-    onClick?: () => void;
-}) {
-    return (
-        <button onClick={onClick} className="flex flex-col items-center gap-1 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition">
-            {icon}
-            <span className="text-xs">{label}</span>
-        </button>
+            <SearchResultsPopup 
+                term={searchTerm} 
+                isVisible={isModalOpen} 
+                onClose={() => setIsModalOpen(false)} 
+            />
+        </header>
     );
 }

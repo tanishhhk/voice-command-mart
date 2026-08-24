@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+
 export type ProductType = "milk" | "yogurt" | "eggs" | "chips" | "cereal" | "jar";
 
 export type ChipVariant = "lays" | "doritos" | "cheetos" | "kettle";
@@ -10,6 +14,38 @@ interface ProductPlaceholderProps {
     chipVariant?: ChipVariant;
     cerealVariant?: CerealVariant;
     imageUrl?: string;
+}
+
+/* ── Product Image (Fast Instant Render) ─────────────────────── */
+function ProductImage({ 
+    src, 
+    alt, 
+    maxH, 
+    scale, 
+    translateY 
+}: { 
+    src: string; 
+    alt: string; 
+    maxH: number; 
+    scale: number; 
+    translateY: string; 
+}) {
+    return (
+        <div className="relative flex items-end justify-center w-full h-full">
+            <img 
+                src={src} 
+                alt={alt} 
+                decoding="async"
+                className="object-contain"
+                style={{ 
+                    maxHeight: `${maxH}px`,
+                    transform: `scale(${scale}) ${translateY}`,
+                    transformOrigin: "bottom center",
+                    filter: "drop-shadow(0px 6px 10px rgba(0,0,0,0.5))"
+                }}
+            />
+        </div>
+    );
 }
 
 /* ── Badge Component ───────────────────────────────────────── */
@@ -418,16 +454,12 @@ export default function ProductPlaceholder({ type, highlighted, badgeQuantity, c
         return (
             <div className={getGlowClasses(highlighted) + " relative flex flex-col items-center justify-end h-full"}>
                 <QuantityBadge quantity={badgeQuantity} />
-                <img 
-                    src={imageUrl} 
-                    alt="product" 
-                    className="object-contain"
-                    style={{ 
-                        maxHeight: `${maxH}px`,
-                        transform: `scale(${scale}) ${translateY}`,
-                        transformOrigin: "bottom center",
-                        filter: "drop-shadow(0px 6px 10px rgba(0,0,0,0.5))"
-                    }}
+                <ProductImage
+                    src={imageUrl}
+                    alt="product"
+                    maxH={maxH}
+                    scale={scale}
+                    translateY={translateY}
                 />
             </div>
         );

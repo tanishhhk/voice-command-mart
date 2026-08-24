@@ -1,58 +1,62 @@
+@import url('https://api.fontshare.com/v2/css?f[]=ranade@300,400,500,600,700,800&display=swap');
 @import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 @layer base {
     :root {
-        --background: #050608;
-        --surface: #0b0d10;
-        --surface-2: #12161b;
+        --background: #faf6eb;
+        --surface: #ffffff;
+        --surface-2: #f4ede0;
 
-        --text-primary: #1c2a38;
-        --text-secondary: #4a5568;
+        --text-primary: #111827;
+        --text-secondary: #374151;
 
-        --blue-glow: #2f7cff;
-        --green-glow: #22c55e;
-        --red-glow: #ef4444;
+        --blue-glow: #2563eb;
+        --green-glow: #16a34a;
+        --red-glow: #dc2626;
 
-        --border-subtle: rgba(255, 255, 255, 0.08);
+        --border-subtle: rgba(0, 0, 0, 0.08);
 
         /* Shelf (Dark Wood) */
         --shelf-top-start: #4a2c1a;
         --shelf-top-end: #3d2314;
         --shelf-front-start: #2e1a0f;
         --shelf-front-end: #1a0e08;
-        --shelf-border-top: rgba(255, 255, 255, 0.15);
-        /* Fridge (Light Mode - Darker Border per request) */
-        --fridge-outer-start: #a0b2c6;
-        --fridge-outer-end: #40576d;
-        --fridge-outer-mid1: #8298b0;
-        --fridge-outer-mid2: #5a768c;
-        --fridge-inner: #7b9ab4; /* One shade lighter than border */
-        --fridge-inner-end: #63839c; /* One shade lighter than border */
-        --fridge-border: #5a768c; 
+        --shelf-border-top: rgba(255, 255, 255, 0.2);
+        
+        /* Fridge (Light Mode) */
+        --fridge-outer-start: #b8c8d8;
+        --fridge-outer-end: #4a637a;
+        --fridge-outer-mid1: #9ab0c6;
+        --fridge-outer-mid2: #6d8ba6;
+        --fridge-inner: #87a5be;
+        --fridge-inner-end: #6f8ea8;
+        --fridge-border: #62829e; 
         --fridge-glass-start: rgba(255,255,255,0.7);
         --fridge-glass-end: rgba(200,230,255,0.4);
         --fridge-glass-border-bottom: #8cc5e3;
         --fridge-glow-start: rgba(255, 210, 100, 0.45);
         --fridge-glow-mid: rgba(255, 210, 100, 0.05);
         --fridge-shadow: rgba(0,40,80,0.15);
-        --fridge-line-color: transparent; /* No lines in light mode */
-        --fridge-header-start: #f4f7fa;
-        --fridge-header-end: #eef3f7;
-        --fridge-header-text: #2f4f6f;
+        --fridge-line-color: transparent;
+        --fridge-header-start: #f8fafc;
+        --fridge-header-end: #edf2f7;
+        --fridge-header-text: #1e3a5f;
         
         /* Produce Section (Light Mode) */
-        --produce-header-color: #4a2c1a; /* Dark brown to match shelf */
-        --produce-header-shadow: 0px 2px 6px rgba(255, 255, 255, 1); /* Soft white shadow */
+        --produce-header-color: #3d2314;
+        --produce-header-shadow: 0px 1px 3px rgba(255, 255, 255, 0.9);
         
-        --section-title-color: #4a2c1a; /* Dark brown */
+        --section-title-color: #3d2314;
         
-        /* Navbar & Voice Texts */
-        --ration-color: #c05621; /* Darker orange */
-        --house-color: #1e4e3b; /* Dark green */
-        --subtitle-color: #374151; /* Gray-700 (dark) */
+        /* Navbar & Brand */
+        --ration-color: #c05621;
+        --house-color: #166534;
+        --subtitle-color: #4b5563;
         
-        --banner-text: #ffffff; /* White text on dark brown background */
-        --banner-subtext: #f1f5f9; /* Light slate for subtext */
+        --banner-text: #ffffff;
+        --banner-subtext: #f1f5f9;
     }
 
     .dark {
@@ -107,6 +111,7 @@
         box-sizing: border-box;
         margin: 0;
         padding: 0;
+        font-family: 'Ranade', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
     }
 
     html,
@@ -115,10 +120,11 @@
         color: var(--text-primary);
         overflow-x: hidden;
         min-height: 100vh;
+        font-family: 'Ranade', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
     }
 
     body {
-        font-family: Inter, sans-serif;
+        font-family: 'Ranade', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
     }
 
     a {
@@ -150,20 +156,18 @@
     }
 
     .site-bg {
-        background-color: #b2d8ce; /* Darker Pastel teal */
-        /* Velvet texture using noise and soft sweeping gradients */
+        background-color: #faf6eb; /* Very light warm yellow/beige */
         background-image: 
-            radial-gradient(circle at 30% 20%, rgba(255,255,255,0.6) 0%, transparent 60%),
-            radial-gradient(circle at 80% 80%, rgba(0,0,0,0.03) 0%, transparent 50%),
-            url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
+            radial-gradient(circle at 25% 20%, rgba(255, 255, 255, 0.95) 0%, transparent 60%),
+            radial-gradient(circle at 80% 80%, rgba(220, 200, 160, 0.2) 0%, transparent 50%),
+            url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
         background-size: 100% 100%, 100% 100%, 200px 200px;
-        box-shadow: inset 0 0 150px rgba(0,0,0,0.08);
+        box-shadow: inset 0 0 150px rgba(180, 150, 100, 0.06);
         transition: background-color 0.3s ease;
     }
 
     .dark .site-bg {
         background-color: #0d1a14;
-        /* Velvet texture using noise and soft sweeping gradients */
         background-image: 
             radial-gradient(circle at 30% 20%, rgba(46, 115, 74, 0.2) 0%, transparent 60%),
             radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.6) 0%, transparent 70%),

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Montserrat } from "next/font/google";
 
 const montserrat = Montserrat({ subsets: ["latin"] });
@@ -14,6 +14,27 @@ import { ShoppingList } from "@/components/ShoppingList";
 import ShelfRow from "./ShelfRow";
 import { getProductShape } from "@/lib/productShape";
 import { useShopping } from "@/context/ShoppingContext";
+import { isProductRunningLow, getRunningLowProducts } from "@/lib/recommendationEngine";
+import { Plus, AlertCircle, ShoppingCart } from "lucide-react";
+
+/* ── Screen Width Hook ───────────────────────────────────────── */
+function useResponsiveScreen() {
+    const [isMobile, setIsMobile] = useState(false);
+    const [isTablet, setIsTablet] = useState(false);
+
+    useEffect(() => {
+        const update = () => {
+            const width = window.innerWidth;
+            setIsMobile(width < 640);
+            setIsTablet(width >= 640 && width < 1024);
+        };
+        update();
+        window.addEventListener("resize", update);
+        return () => window.removeEventListener("resize", update);
+    }, []);
+
+    return { isMobile, isTablet };
+}
 
 /* ── Helpers ─────────────────────────────────────────────────── */
 
@@ -36,27 +57,44 @@ const SHELF_ITEMS_PER_ROW = 7;
 interface ShelfProductProps {
     product: Product;
     index: number;
+    totalInRow?: number;
+    isTopRow?: boolean;
+    isBottomRow?: boolean;
     onClick?: (product: Product) => void;
     dropShadow?: string;
     scale?: number;
 }
 
-function ShelfProduct({ product, index, onClick, dropShadow, scale }: ShelfProductProps) {
+function ShelfProduct({ 
+    product, 
+    index, 
+    totalInRow = 7, 
+    isTopRow = false, 
+    isBottomRow = false, 
+    onClick, 
+    dropShadow, 
+    scale 
+}: ShelfProductProps) {
     const shape = getProductShape(product);
     const [isHovered, setIsHovered] = useState(false);
 
-    const { highlightedItem, searchResults, state } = useShopping();
+    const { highlightedItem, searchResults, state, dispatch } = useShopping();
     const isContextHighlighted = highlightedItem?.productId === product.id;
     const isSearchActive = state.searchQuery.term || state.searchQuery.brand || state.searchQuery.maxPrice;
     const isSearchResult = searchResults.includes(product.id);
     const badgeQuantity = isContextHighlighted ? highlightedItem.badgeQuantity : undefined;
-    const shouldStack = !["Drinks", "Dairy", "Vegetables"].includes(product.category);
+    const shouldStack = !["Drinks", "Dairy", "Vegetables", "Fruits"].includes(product.category);
+    const isLowStock = isProductRunningLow(product.id);
+
+    // Smart alignment: right half of shelf/fridge items pop hover card to the left, left half pop to the right
+    const isRightHalf = index >= Math.ceil(totalInRow / 2) || (totalInRow <= 5 && index >= 3) || (totalInRow <= 3 && index >= 2);
+    const cardAlign = isRightHalf ? "left" : "right";
 
     return (
         <div
             className="relative transition-all duration-500"
             style={{ 
-                zIndex: isHovered ? 50 : 10, 
+                zIndex: isHovered ? 200 : 10, 
                 cursor: "pointer",
                 opacity: isSearchActive && !isSearchResult ? 0.25 : 1,
                 filter: isSearchActive && !isSearchResult ? 'grayscale(100%) blur(1px)' : 'none'
@@ -67,6 +105,28 @@ function ShelfProduct({ product, index, onClick, dropShadow, scale }: ShelfProdu
             data-product-name={product.name}
             onClick={() => onClick?.(product)}
         >
+            {/* Tilted Running Low Badge with Quick-Add Plus Button */}
+            {isLowStock && (
+                <div 
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        dispatch({
+                            type: "ADD_ITEM",
+                            payload: {
+                                name: product.name,
+                                quantity: 1,
+                                unit: product.quantity || "1 pc"
+                            }
+                        });
+                    }}
+                    className="absolute -top-2 -left-1.5 z-40 flex items-center gap-0.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white text-[8px] sm:text-[9px] font-black px-1.5 py-0.5 rounded shadow-md -rotate-6 transition-transform hover:scale-110 active:scale-95 cursor-pointer border border-white/40"
+                    title="Running low based on your past consumption! Click to add."
+                >
+                    <span>LOW</span>
+                    <Plus className="w-2.5 h-2.5 stroke-[3]" />
+                </div>
+            )}
+
             <div style={{
                 ...(dropShadow ? { filter: dropShadow } : {}),
                 ...(scale ? { transform: `scale(${scale})` } : {})
@@ -93,13 +153,20 @@ function ShelfProduct({ product, index, onClick, dropShadow, scale }: ShelfProdu
                     />
                 </div>
             </div>
-            {isHovered && <ProductHoverCard product={product} />}
+            {isHovered && (
+                <ProductHoverCard 
+                    product={product} 
+                    align={cardAlign} 
+                    isTopRow={isTopRow} 
+                    isBottomRow={isBottomRow} 
+                />
+            )}
         </div>
     );
 }
 
 /* ── Fridge chunk height ──────────────────────────────────────── */
-function getChunkHeight(chunk: Product[]): number {
+function getChunkHeight(chunk: Product[], isMobile: boolean): number {
     let hasTallBottle = false;
     let hasMedium = false;
     let hasPacket = false;
@@ -118,7 +185,13 @@ function getChunkHeight(chunk: Product[]): number {
         if (isPacketCheck) hasPacket = true;
     });
 
-    // Tighter heights — products will clip against shelf naturally
+    if (isMobile) {
+        if (hasPacket) return 120;
+        if (hasTallBottle) return 165;
+        if (hasMedium) return 150;
+        return 105;
+    }
+
     if (hasPacket) return 140;
     if (hasTallBottle) return 190;
     if (hasMedium) return 175;
@@ -127,64 +200,68 @@ function getChunkHeight(chunk: Product[]): number {
 
 /* ── Fridge (Refrigerated) ────────────────────────────────────── */
 function FridgeSection() {
-    const dairyChunks = chunkArray(byCategory("Dairy"), FRIDGE_ITEMS_PER_ROW);
-    const drinkChunks = chunkArray(byCategory("Drinks"), FRIDGE_ITEMS_PER_ROW);
-    const packetsChunks = chunkArray(byCategory("Packets"), 4); // 4 items per row so Masti drops down
+    const { isMobile, isTablet } = useResponsiveScreen();
+    const fridgeCols = isMobile ? 3 : (isTablet ? 4 : FRIDGE_ITEMS_PER_ROW);
+    const packetsCols = isMobile ? 3 : (isTablet ? 3 : 4);
 
-    // Insert packets after the 2nd shelf (index 2)
+    const dairyChunks = chunkArray(byCategory("Dairy"), fridgeCols);
+    const drinkChunks = chunkArray(byCategory("Drinks"), fridgeCols);
+    const packetsChunks = chunkArray(byCategory("Packets"), packetsCols);
+
+    // Insert packets after the 2nd shelf
     const itemChunks = [
-        ...dairyChunks.slice(0, 2),
+        ...dairyChunks.slice(0, isMobile ? 3 : 2),
         ...packetsChunks,
-        ...dairyChunks.slice(2),
+        ...dairyChunks.slice(isMobile ? 3 : 2),
         ...drinkChunks
     ];
 
     return (
-        <div className="w-full" style={{ marginBottom: 24 }}>
-            {/* Fridge outer frame — light metallic silver border */}
+        <div className="w-full mb-4 sm:mb-6">
+            {/* Fridge outer frame */}
             <div style={{
-                borderRadius: 28,
-                background: "linear-gradient(145deg, var(--fridge-outer-start) 0%, var(--fridge-outer-mid1) 15%, var(--fridge-outer-mid2) 50%, var(--fridge-outer-end) 100%)", /* Adapts to light/dark mode */
+                borderRadius: isMobile ? 20 : 28,
+                background: "linear-gradient(145deg, var(--fridge-outer-start) 0%, var(--fridge-outer-mid1) 15%, var(--fridge-outer-mid2) 50%, var(--fridge-outer-end) 100%)",
                 boxShadow: "0 40px 80px -15px rgba(0,10,20,0.6), 0 20px 40px -10px rgba(0,10,20,0.4), inset 0 2px 12px rgba(255,255,255,0.4), inset 0 -4px 15px rgba(0,30,60,0.4)",
-                padding: "12px",
+                padding: isMobile ? "8px" : "12px",
             }}>
                 <div
                     style={{
-                        borderRadius: 16,
+                        borderRadius: isMobile ? 12 : 16,
                         background: "var(--fridge-inner)",
                         border: "2px solid var(--fridge-border)",
                         overflow: "hidden",
                         position: "relative",
                     }}
                 >
-                {/* Top header bar — matches reference light bar with REFRIGERATED label */}
+                {/* Top header bar */}
                 <div style={{
-                    height: 38,
+                    height: isMobile ? 32 : 38,
                     background: "linear-gradient(180deg, var(--fridge-header-start) 0%, var(--fridge-header-end) 100%)",
                     borderBottom: "1px solid var(--fridge-glass-border-bottom)",
-                    borderTopLeftRadius: 14,
-                    borderTopRightRadius: 14,
+                    borderTopLeftRadius: isMobile ? 10 : 14,
+                    borderTopRightRadius: isMobile ? 10 : 14,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    paddingLeft: 14,
-                    paddingRight: 14,
+                    paddingLeft: isMobile ? 10 : 14,
+                    paddingRight: isMobile ? 10 : 14,
                 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                         <span className={montserrat.className} style={{
-                            fontSize: 15,
+                            fontSize: isMobile ? 12 : 15,
                             fontWeight: 700,
                             letterSpacing: "0.12em",
                             color: "var(--fridge-header-text)",
                         }}>REFRIGERATED</span>
                     </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
                         <div style={{
-                            width: 7, height: 7, borderRadius: "50%",
+                            width: 6, height: 6, borderRadius: "50%",
                             background: "#22cc44",
                             boxShadow: "0 0 6px #22cc44",
                         }} />
-                        <span style={{ fontSize: 10, color: "#597c9c", fontWeight: 500 }}>2–6°C</span>
+                        <span style={{ fontSize: isMobile ? 9 : 10, color: "#597c9c", fontWeight: 500 }}>2–6°C</span>
                     </div>
                 </div>
 
@@ -195,73 +272,81 @@ function FridgeSection() {
                     boxShadow: "inset 0 25px 60px var(--fridge-shadow)", 
                 }}>
                     
-                    {/* Vertical panels on back wall - dynamic visibility via line color */}
+                    {/* Vertical panels on back wall */}
                     <div style={{
                         position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
                         background: "repeating-linear-gradient(90deg, transparent 0%, transparent 12.3%, var(--fridge-line-color) 12.3%, var(--fridge-line-color) 12.5%)",
                         zIndex: 1,
                     }} />
 
-                    {/* Inner side walls (subtle shadows on edges) */}
+                    {/* Inner side walls */}
                     <div style={{
-                        position: "absolute", top: 0, left: 0, bottom: 0, width: 60,
+                        position: "absolute", top: 0, left: 0, bottom: 0, width: isMobile ? 30 : 60,
                         background: "linear-gradient(90deg, rgba(0,40,80,0.05) 0%, transparent 100%)",
                         zIndex: 5,
                     }} />
                     <div style={{
-                        position: "absolute", top: 0, right: 0, bottom: 0, width: 60,
+                        position: "absolute", top: 0, right: 0, bottom: 0, width: isMobile ? 30 : 60,
                         background: "linear-gradient(270deg, rgba(0,40,80,0.05) 0%, transparent 100%)",
                         zIndex: 5,
                     }} />
 
                     {/* Shelf rows */}
-                    <div style={{ paddingTop: 30 }}>
+                    <div style={{ paddingTop: isMobile ? 18 : 30 }}>
                         {itemChunks.map((chunk, chunkIdx) => (
                             <div
                                 key={`fridge-chunk-${chunkIdx}`}
                                 style={{
                                     position: "relative",
-                                    height: getChunkHeight(chunk),
-                                    paddingBottom: 12, // Room for the solid shelf below
+                                    height: getChunkHeight(chunk, isMobile),
+                                    paddingBottom: isMobile ? 8 : 12,
                                 }}
                             >
                                 <div style={{
                                     position: "absolute",
-                                    bottom: 12, // Sit exactly on top of the solid shelf
+                                    bottom: isMobile ? 8 : 12,
                                     left: 0,
                                     right: 0,
-                                    height: "calc(100% - 12px)",
+                                    height: isMobile ? "calc(100% - 8px)" : "calc(100% - 12px)",
                                     display: "flex",
                                     alignItems: "flex-end",
                                     justifyContent: "center",
-                                    gap: 8,
-                                    paddingLeft: 16,
-                                    paddingRight: 16,
+                                    gap: isMobile ? 4 : 8,
+                                    paddingLeft: isMobile ? 6 : 16,
+                                    paddingRight: isMobile ? 6 : 16,
                                 }}>
                                     {chunk.map((product, i) => (
                                         <div key={`fridge-${product.id}`} style={{ 
                                             minWidth: 0, 
                                             flexShrink: 1, 
                                             position: "relative",
-                                            height: "100%", // Full height so spotlight starts at ceiling
+                                            height: "100%",
                                             display: "flex",
                                             flexDirection: "column",
                                             justifyContent: "flex-end",
                                             alignItems: "center"
                                         }}>
-                                            {/* Soft Radial Glow on Back Wall from the shelf above */}
+                                            {/* Glow on back wall */}
                                             <div style={{
                                                 position: "absolute",
                                                 top: chunkIdx === 0 ? -30 : 0,
                                                 left: "50%",
                                                 transform: "translateX(-50%)",
-                                                width: "150%", // Widen it slightly so the lights blend together nicer
+                                                width: "150%",
                                                 height: chunkIdx === 0 ? "calc(100% + 30px)" : "100%",
                                                 background: "radial-gradient(ellipse at top, var(--fridge-glow-start) 0%, var(--fridge-glow-mid) 50%, transparent 80%)",
                                                 pointerEvents: "none",
                                                 zIndex: 2,
                                             }} />
-                                            <ShelfProduct product={product} index={i} dropShadow="drop-shadow(0px 8px 12px rgba(0,30,60,0.15))" />
+                                            <ShelfProduct 
+                                                product={product} 
+                                                index={i} 
+                                                totalInRow={chunk.length}
+                                                isTopRow={chunkIdx === 0}
+                                                isBottomRow={chunkIdx === itemChunks.length - 1}
+                                                dropShadow="drop-shadow(0px 8px 12px rgba(0,30,60,0.15))" 
+                                                scale={isMobile ? 0.82 : 1}
+                                            />
                                         </div>
                                     ))}
                                 </div>
@@ -275,21 +360,19 @@ function FridgeSection() {
                                         right: 0,
                                         zIndex: 20,
                                     }}>
-                                        {/* Back wall shadow cast by shelf to create depth */}
                                         <div style={{
                                             position: "absolute",
                                             top: "100%",
                                             left: 0,
                                             right: 0,
-                                            height: 40,
+                                            height: 30,
                                             background: "linear-gradient(180deg, var(--fridge-shadow) 0%, transparent 100%)",
                                             zIndex: -1,
                                             pointerEvents: "none",
                                         }} />
                                         
-                                        {/* Glass block shelf */}
                                         <div style={{
-                                            height: 12,
+                                            height: isMobile ? 8 : 12,
                                             background: "linear-gradient(180deg, var(--fridge-glass-start) 0%, var(--fridge-glass-end) 100%)",
                                             borderTop: "1px solid rgba(255,255,255,0.4)",
                                             borderBottom: "2px solid var(--fridge-glass-border-bottom)",
@@ -302,10 +385,10 @@ function FridgeSection() {
                         ))}
                     </div>
 
-                    {/* Bottom tray for last row — matches solid shelves */}
+                    {/* Bottom tray for last row */}
                     <div style={{
                         position: "relative",
-                        height: 12,
+                        height: isMobile ? 8 : 12,
                         background: "linear-gradient(180deg, #1f252e 0%, #0d1014 100%)",
                         borderTop: "1px solid #3c4656",
                         borderBottom: "2px solid #000000",
@@ -323,13 +406,13 @@ function FridgeSection() {
                     justifyContent: "space-around",
                     paddingLeft: "20%",
                     paddingRight: "20%",
-                    marginTop: "-10px", // Pull up to stick to metallic frame
+                    marginTop: "-10px",
                     position: "relative",
                     zIndex: -1,
                 }}>
                     {[0, 1].map(i => (
                         <div key={i} style={{
-                            width: 30, height: 12,
+                            width: isMobile ? 20 : 30, height: 10,
                             background: "linear-gradient(180deg, #14161a 0%, #0a0b0d 100%)",
                             borderRadius: "0 0 6px 6px",
                             boxShadow: "0 4px 10px rgba(0,0,0,0.8)"
@@ -347,36 +430,63 @@ function ProduceSection({ category, title }: { category: Product["category"], ti
     const vegProducts = byCategory(category);
     if (vegProducts.length === 0) return null;
 
-    // 4 rows × 7 columns = 28 slots
-    const rows = chunkArray(vegProducts.slice(0, 28), 7);
+    const { isMobile, isTablet } = useResponsiveScreen();
+    const { dispatch } = useShopping();
+    const runningLowItems = getRunningLowProducts();
+    const cols = isMobile ? 4 : (isTablet ? 5 : 7);
+    const cubbyHeight = isMobile ? 115 : (isTablet ? 128 : 140);
+    const productScale = isMobile ? 0.78 : (isTablet ? 0.85 : 0.9);
+
+    const rows = chunkArray(vegProducts.slice(0, 28), cols);
+
+    const handleAddAllRunningLow = () => {
+        runningLowItems.forEach(({ product }) => {
+            dispatch({
+                type: "ADD_ITEM",
+                payload: {
+                    name: product.name,
+                    quantity: 1,
+                    unit: product.quantity || "1 pc"
+                }
+            });
+        });
+    };
 
     return (
-        <div className="w-full" style={{ marginBottom: 0 }}>
+        <div className="w-full mb-3 sm:mb-4">
             {/* Header */}
-            <div style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                padding: "6px 12px 8px",
-            }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <span className={`${montserrat.className} dark:text-[#f4ebd0]`} style={{
-                        fontSize: 15,
-                        fontWeight: 700,
-                        letterSpacing: "0.12em",
-                        textTransform: "uppercase",
-                        color: "var(--produce-header-color, #0f4c3a)", // Dark green in light mode
-                        textShadow: "var(--produce-header-shadow, 1px 1px 0px #ffffff, -1px -1px 0px #ffffff, 1px -1px 0px #ffffff, -1px 1px 0px #ffffff)", // Solid white shadow
-                    }}>{title}</span>
+            <div className="flex flex-wrap items-center justify-between gap-2 px-2 py-1.5 sm:px-3 sm:py-2">
+                <div className="flex flex-wrap items-center gap-2.5 sm:gap-4">
+                    <span className="font-extrabold text-sm sm:text-base tracking-wider uppercase text-[#3d2314] dark:text-[#f4ebd0]">
+                        {title}
+                    </span>
+
+                    {/* Running Low Smart Alert beside Fresh Vegetables */}
+                    {title === "Fresh Vegetables" && runningLowItems.length > 0 && (
+                        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-100/90 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-700/60 text-amber-950 dark:text-amber-100 text-xs shadow-xs">
+                            <AlertCircle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 flex-shrink-0" />
+                            <span className="font-bold hidden md:inline text-amber-900 dark:text-amber-300">Running Low:</span>
+                            <span className="font-semibold truncate max-w-[140px] sm:max-w-[220px]">
+                                {runningLowItems.map(i => i.product.name).join(", ")}
+                            </span>
+                            <button
+                                onClick={handleAddAllRunningLow}
+                                className="ml-1 px-2 py-0.5 rounded-md bg-amber-600 hover:bg-amber-700 text-white font-black text-[10px] sm:text-[11px] shadow-xs transition-transform hover:scale-105 active:scale-95 flex items-center gap-1"
+                            >
+                                <ShoppingCart className="w-3 h-3" />
+                                <span>Add All</span>
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
 
-            {/* Outer container — dark framed panel matching reference */}
+            {/* Outer container */}
             <div style={{
                 background: "#0c0d0f",
                 border: "1px solid #1c2026",
-                borderRadius: 16,
-                overflow: "hidden",
+                borderRadius: isMobile ? 12 : 16,
+                overflow: "visible",
                 boxShadow: "0 40px 80px -15px rgba(0,10,20,0.6), 0 20px 40px -10px rgba(0,10,20,0.4)",
             }}>
                 {rows.map((rowItems, rowIdx) => (
@@ -387,37 +497,34 @@ function ProduceSection({ category, title }: { category: Product["category"], ti
                             width: "100%",
                             justifyContent: "center",
                         }}>
-                            {Array.from({ length: 7 }).map((_, colIdx) => {
+                            {Array.from({ length: cols }).map((_, colIdx) => {
                                 const p = rowItems[colIdx];
                                 return (
                                     <div
                                         key={colIdx}
                                         style={{
-                                            width: "14.2857%", // exactly 1/7th width to align with full rows
+                                            width: `${100 / cols}%`,
                                             position: "relative",
-                                            height: 140,
+                                            height: cubbyHeight,
                                             display: "flex",
                                             flexDirection: "column",
                                             alignItems: "center",
                                             justifyContent: "flex-end",
-                                            // Sleek dark dividers with subtle highlight
-                                            borderRight: colIdx < 6 ? "2px solid #1c110a" : "none",
+                                            borderRight: colIdx < cols - 1 ? "2px solid #1c110a" : "none",
                                             borderBottom: rowIdx < rows.length - 1 ? "2px solid #1c110a" : "none",
-                                            // Lighter premium wood slatted background
                                             background: "repeating-linear-gradient(180deg, #3d2314 0px, #3d2314 18px, #29160a 18px, #29160a 20px)",
-                                            // Stronger 3D depth shadow
                                             boxShadow: "inset 0 25px 40px rgba(0,0,0,0.95), inset 4px 0 15px rgba(0,0,0,0.8)",
-                                            padding: "0 8px 12px 8px",
+                                            padding: isMobile ? "0 4px 8px 4px" : "0 8px 12px 8px",
                                             overflow: "visible",
                                         }}
                                     >
-                                        {/* Flat strip light at top center */}
+                                        {/* Flat strip light */}
                                         <div style={{
                                             position: "absolute",
                                             top: 0,
                                             left: "50%",
                                             transform: "translateX(-50%)",
-                                            width: 32,
+                                            width: isMobile ? 22 : 32,
                                             height: 2,
                                             background: "#fff9e6",
                                             boxShadow: "0 1px 8px 2px rgba(255, 210, 150, 0.9)",
@@ -439,23 +546,29 @@ function ProduceSection({ category, title }: { category: Product["category"], ti
 
                                         {p && (
                                             <>
-                                                {/* Floor contact shadow to ground the vegetable */}
+                                                {/* Floor contact shadow */}
                                                 <div style={{
                                                     position: "absolute",
-                                                    bottom: 4, // lowered back since board is gone
+                                                    bottom: 4,
                                                     left: "50%",
                                                     transform: "translateX(-50%)",
                                                     width: "60%",
-                                                    height: 12,
+                                                    height: 10,
                                                     background: "radial-gradient(ellipse at center, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 70%)",
                                                     zIndex: 2,
                                                 }} />
 
-                                                {/* Product image with 3D drop shadow */}
-                                                <div style={{
-                                                    position: "relative",
-                                                }}>
-                                                    <ShelfProduct product={p} index={colIdx} dropShadow="drop-shadow(0px 8px 12px rgba(0,0,0,0.8))" scale={0.9} />
+                                                {/* Product image */}
+                                                <div style={{ position: "relative" }}>
+                                                    <ShelfProduct 
+                                                        product={p} 
+                                                        index={colIdx} 
+                                                        totalInRow={cols} 
+                                                        isTopRow={rowIdx === 0}
+                                                        isBottomRow={rowIdx === rows.length - 1}
+                                                        dropShadow="drop-shadow(0px 8px 12px rgba(0,0,0,0.8))" 
+                                                        scale={productScale} 
+                                                    />
                                                 </div>
                                             </>
                                         )}
@@ -470,13 +583,33 @@ function ProduceSection({ category, title }: { category: Product["category"], ti
     );
 }
 
-/* ── Category Renderer (right shelf) ─────────────────────────── */
-function renderCategoryShelf(category: string, productsList: Product[], itemsPerRow = SHELF_ITEMS_PER_ROW, isLastCategory = false) {
+/* ── Category Shelf Component ────────────────────────────────── */
+function CategoryShelfSection({ 
+    category, 
+    productsList, 
+    itemsPerRow = SHELF_ITEMS_PER_ROW, 
+    isLastCategory = false 
+}: { 
+    category: string; 
+    productsList: Product[]; 
+    itemsPerRow?: number; 
+    isLastCategory?: boolean; 
+}) {
+    const { isMobile, isTablet } = useResponsiveScreen();
+
     if (productsList.length === 0) return null;
-    let chunks = chunkArray(productsList, itemsPerRow);
+
+    let effectiveItemsPerRow = itemsPerRow;
+    if (isMobile) {
+        effectiveItemsPerRow = category === "Packets" ? 3 : (category === "Cereals" ? 3 : 3);
+    } else if (isTablet) {
+        effectiveItemsPerRow = category === "Packets" ? 3 : (category === "Cereals" ? 4 : 5);
+    }
+
+    let chunks = chunkArray(productsList, effectiveItemsPerRow);
     
-    // Custom logic to support exact rows for Toiletries
-    if (category === "Toiletries") {
+    // Custom logic to support exact rows for Toiletries on desktop
+    if (category === "Toiletries" && !isMobile && !isTablet) {
         chunks = [
             productsList.slice(0, 3), // Lux shelf (3 items)
             productsList.slice(3, 8), // Axe shelf + Gillette (5 items)
@@ -486,13 +619,12 @@ function renderCategoryShelf(category: string, productsList: Product[], itemsPer
         ];
     }
 
-    // Dynamic height: taller for tall products, shorter for small ones
+    // Dynamic height calculation
     const getRowHeight = (chunk: Product[], cat: string, idx: number) => {
         const hasBottle = chunk.some(p => p.image?.includes('/drinks/') || p.image?.includes('dairy_'));
         const hasAtta = chunk.some(p => p.image?.includes('random_7.png'));
         const hasExtraTall = chunk.some(p => p.image?.includes('toiletries_') || p.image?.includes('random_'));
         
-        // Differentiate tall cleaning bottles (Lizol, Harpic, etc) from short ones (Vim, Scotch, Surf Excel, Pril)
         const hasTallCleaning = chunk.some(p => p.image?.includes('cleaning_1.png') || p.image?.includes('cleaning_7.png') || p.image?.includes('cleaning_8.png') || p.image?.includes('cleaning_9.png') || p.image?.includes('cleaning_2.png') || p.image?.includes('cleaning_10.png') || p.image?.includes('cleaning_11.png') || p.image?.includes('cleaning_12.png'));
         const hasShortCleaning = chunk.some(p => p.image?.includes('cleaning_3.png') || p.image?.includes('cleaning_4.png') || p.image?.includes('cleaning_5.png') || p.image?.includes('cleaning_6.png'));
 
@@ -503,25 +635,24 @@ function renderCategoryShelf(category: string, productsList: Product[], itemsPer
         const hasCereals = chunk.some(p => p.image?.includes('cereals_'));
         
         let height = 165;
-        if (hasAtta) height = 270;
-        else if (hasTallCleaning) height = 240;
-        else if (hasBottle) height = 195;
-        else if (hasExtraTall) height = 215;
-        else if (hasCereals) height = 205; // Taller shelf for the newly enlarged uniform cereal boxes
-        else if (hasMedium) height = 185;
-        else if (hasShortCleaning) height = 160;
-        else if (hasSnacks) height = 145;
-        else if (hasBaby) height = 115;
-        else if (hasSmall) height = 140;
+        if (hasAtta) height = isMobile ? 220 : 270;
+        else if (hasTallCleaning) height = isMobile ? 200 : 240;
+        else if (hasBottle) height = isMobile ? 170 : 195;
+        else if (hasExtraTall) height = isMobile ? 180 : 215;
+        else if (hasCereals) height = isMobile ? 175 : 205;
+        else if (hasMedium) height = isMobile ? 160 : 185;
+        else if (hasShortCleaning) height = isMobile ? 140 : 160;
+        else if (hasSnacks) height = isMobile ? 130 : 145;
+        else if (hasBaby) height = isMobile ? 100 : 115;
+        else if (hasSmall) height = isMobile ? 125 : 140;
 
-        // Apply title spacing adjustments for the first row of specific categories
         if (idx === 0) {
             if (cat === "Snacks" || cat === "Spreads" || cat === "Cleaning") {
-                height += 20; // Add little spacing after the title
+                height += 20;
             } else if (cat === "Toiletries") {
-                height -= 40; // Reduce the space after toiletries title
+                height -= 40;
             } else if (cat === "Baby Care") {
-                height -= 35; // Reduce the space after baby care title
+                height -= 35;
             }
         }
         return height;
@@ -542,7 +673,7 @@ function renderCategoryShelf(category: string, productsList: Product[], itemsPer
 
     return (
         <div key={category} style={{
-            marginBottom: category === "Baby Care" ? 10 : 32, // space out floating categories, less for baby care
+            marginBottom: category === "Baby Care" ? 8 : (isMobile ? 16 : 28),
         }}>
             {chunks.map((chunk, idx) => {
                 const isLastShelf = isLastCategory && idx === chunks.length - 1;
@@ -555,18 +686,26 @@ function renderCategoryShelf(category: string, productsList: Product[], itemsPer
                         hasLight={!isLastShelf}
                     >
                         <div style={{
-                        display: "flex",
-                        alignItems: "flex-end",
-                        justifyContent: "center",
-                        gap: 14,
-                        padding: "0 12px",
-                    }}>
-                        {chunk.map((product, i) => (
-                            <div key={`shelf-${product.id}`} style={{ minWidth: 0, flexShrink: 1 }}>
-                                <ShelfProduct product={product} index={i} dropShadow="drop-shadow(0px 12px 8px rgba(0,0,0,0.5)) drop-shadow(0px 20px 20px rgba(0,0,0,0.3))" />
-                            </div>
-                        ))}
-                    </div>
+                            display: "flex",
+                            alignItems: "flex-end",
+                            justifyContent: "center",
+                            gap: isMobile ? 6 : (isTablet ? 10 : 14),
+                            padding: isMobile ? "0 4px" : "0 12px",
+                        }}>
+                            {chunk.map((product, i) => (
+                                <div key={`shelf-${product.id}`} style={{ minWidth: 0, flexShrink: 1 }}>
+                                    <ShelfProduct 
+                                        product={product} 
+                                        index={i} 
+                                        totalInRow={chunk.length}
+                                        isTopRow={idx === 0}
+                                        isBottomRow={idx === chunks.length - 1}
+                                        dropShadow="drop-shadow(0px 12px 8px rgba(0,0,0,0.5)) drop-shadow(0px 20px 20px rgba(0,0,0,0.3))" 
+                                        scale={isMobile ? 0.85 : 1}
+                                    />
+                                </div>
+                            ))}
+                        </div>
                     </ShelfRow>
                 );
             })}
@@ -585,56 +724,57 @@ export default function ShelfBackground() {
     const leftCategories = ["Baby Care", "Toiletries", "Cleaning"];
 
     return (
-        <div style={{
-            display: "flex",
-            flexDirection: "row",
-            width: "100%",
-            padding: "10px 24px 80px",
-            gap: 20,
-            boxSizing: "border-box",
-            alignItems: "flex-start"
-        }}>
-            {/* LEFT COLUMN */}
-            <div style={{ width: "38%", flexShrink: 0, display: "flex", flexDirection: "column", gap: 24 }}>
-                <VoiceAssistant />
-                <div style={{ marginTop: "10px" }}>
-                    <FridgeSection />
+        <div className="w-full px-2 sm:px-4 md:px-6 pt-2 pb-24 box-border max-w-full">
+            {/* ── TOP HERO SECTION: Mic + Search Bar + Transitioning Offer Card ── */}
+            <div className="w-full mb-6 sm:mb-8 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-6">
+                {/* Left & Center: Mic + Command Center */}
+                <div className="flex-1 w-full min-w-0">
+                    <VoiceAssistant />
                 </div>
-                {leftCategories.map((cat, idx) => 
-                    renderCategoryShelf(
-                        cat,
-                        byCategory(cat as Product["category"]),
-                        4, // Narrower shelf fits ~4 items
-                        idx === leftCategories.length - 1
-                    )
-                )}
-            </div>
 
-            {/* RIGHT COLUMN */}
-            <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 12 }}>
-                <div style={{ zIndex: 100, marginBottom: "12px" }}>
+                {/* Right: Transitioning Offer Banner Card / Shopping List */}
+                <div className="w-full lg:w-[520px] xl:w-[580px] flex-shrink-0">
                     {state.items.length > 0 ? (
-                        <div>
-                            <ShoppingList />
-                        </div>
+                        <ShoppingList />
                     ) : (
                         <OffersBanner />
                     )}
                 </div>
+            </div>
 
-                {/* Produce at top */}
-                <ProduceSection category="Vegetables" title="Fresh Vegetables" />
-                <ProduceSection category="Fruits" title="Fresh Fruits" />
+            {/* ── STORE SHELF COLUMNS (LEFT: FRIDGE + MISC / RIGHT: PRODUCE + PANTRY) ── */}
+            <div className="flex flex-col lg:flex-row w-full gap-6 lg:gap-8 items-stretch lg:items-start">
+                {/* LEFT COLUMN (38% on desktop) */}
+                <div className="w-full lg:w-[38%] flex-shrink-0 flex flex-col gap-4 sm:gap-6">
+                    <FridgeSection />
+                    {leftCategories.map((cat, idx) => 
+                        <CategoryShelfSection
+                            key={cat}
+                            category={cat}
+                            productsList={byCategory(cat as Product["category"])}
+                            itemsPerRow={4}
+                            isLastCategory={idx === leftCategories.length - 1}
+                        />
+                    )}
+                </div>
 
-                {/* Other food categories */}
-                {rightCategories.map((cat, idx) =>
-                    renderCategoryShelf(
-                        cat,
-                        byCategory(cat as Product["category"]),
-                        cat === "Packets" ? 4 : (cat === "Cereals" ? 5 : SHELF_ITEMS_PER_ROW),
-                        idx === rightCategories.length - 1
-                    )
-                )}
+                {/* RIGHT COLUMN */}
+                <div className="flex-1 w-full min-w-0 flex flex-col gap-3 sm:gap-4">
+                    {/* Produce at top */}
+                    <ProduceSection category="Vegetables" title="Fresh Vegetables" />
+                    <ProduceSection category="Fruits" title="Fresh Fruits" />
+
+                    {/* Other food categories */}
+                    {rightCategories.map((cat, idx) =>
+                        <CategoryShelfSection
+                            key={cat}
+                            category={cat}
+                            productsList={byCategory(cat as Product["category"])}
+                            itemsPerRow={cat === "Packets" ? 4 : (cat === "Cereals" ? 5 : SHELF_ITEMS_PER_ROW)}
+                            isLastCategory={idx === rightCategories.length - 1}
+                        />
+                    )}
+                </div>
             </div>
         </div>
     );
