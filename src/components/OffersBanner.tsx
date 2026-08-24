@@ -25,14 +25,14 @@ const SLIDES = [
         id: "flash",
         tag: "FLASH DEAL • ENDS IN 2H",
         tagIcon: Clock,
-        tagColor: "text-cyan-400",
+        tagColor: "text-blue-700",
         title: "Buy 1 Get 1 Free",
         description: "Selected dairy products, cold beverages & fresh juices.",
         badge: "BOGO FREE",
-        badgeBg: "bg-gradient-to-r from-cyan-500 to-blue-600",
-        cardBg: "linear-gradient(135deg, #0b1e2d 0%, #06111a 100%)",
-        textColor: "text-white",
-        subtextColor: "text-gray-300",
+        badgeBg: "bg-gradient-to-r from-blue-500 to-indigo-600",
+        cardBg: "linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%)", // Lighter sky blue
+        textColor: "text-sky-950",
+        subtextColor: "text-sky-900",
         hasWatermark: false,
     }
 ];
@@ -52,10 +52,10 @@ export default function OffersBanner() {
     const TagIcon = slide.tagIcon;
 
     return (
-        <div className="w-full relative h-[155px] sm:h-[165px] rounded-3xl overflow-hidden shadow-2xl border border-black/10 dark:border-white/10 group transition-all">
+        <div className="w-full relative h-[175px] sm:h-[190px] rounded-3xl overflow-hidden shadow-2xl border border-black/10 dark:border-white/10 group transition-all">
             {/* Background transition wrapper */}
             <div 
-                className="absolute inset-0 transition-all duration-700 ease-in-out p-4 sm:p-5 flex flex-col justify-between"
+                className="absolute inset-0 transition-all duration-700 ease-in-out p-5 sm:p-6 flex flex-col justify-between"
                 style={{
                     background: slide.cardBg,
                     boxShadow: "inset 0 1px 2px rgba(255,255,255,0.25)",
@@ -76,7 +76,7 @@ export default function OffersBanner() {
                 <div className="flex items-center justify-between z-10">
                     <div className="flex items-center gap-1.5">
                         <TagIcon className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${slide.tagColor}`} />
-                        <span className={`${montserrat.className} ${slide.tagColor} font-black tracking-widest text-[10px] sm:text-xs uppercase`}>
+                        <span className={`${montserrat.className} ${slide.tagColor} font-extrabold tracking-widest text-[10px] sm:text-xs uppercase`}>
                             {slide.tag}
                         </span>
                     </div>
@@ -100,10 +100,10 @@ export default function OffersBanner() {
 
                 {/* Content */}
                 <div className="z-10 pr-16 sm:pr-20">
-                    <h3 className={`text-lg sm:text-xl md:text-2xl font-black ${slide.textColor} leading-tight tracking-tight drop-shadow-xs`}>
+                    <h3 className={`text-lg sm:text-2xl md:text-[26px] font-bold ${slide.textColor} leading-tight tracking-tight drop-shadow-xs`}>
                         {slide.title}
                     </h3>
-                    <p className={`text-xs sm:text-[13px] ${slide.subtextColor} mt-1 line-clamp-2 leading-snug max-w-[90%] font-medium`}>
+                    <p className={`text-xs sm:text-[14px] ${slide.subtextColor} mt-1.5 line-clamp-2 leading-snug max-w-[90%] font-medium`}>
                         {slide.description}
                     </p>
                 </div>
