@@ -268,25 +268,16 @@ export const VoiceAssistant = () => {
 
           {/* Quick Action Suggestion Pills */}
           <div className="mt-4">
-            <p className="text-xs font-bold text-gray-800 dark:text-gray-200 mb-2">Try these examples</p>
-            <div className="flex flex-wrap items-center gap-2">
+            <p className="text-xs font-bold text-gray-800 dark:text-gray-200 mb-2">Try Saying this</p>
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               {QUICK_ACTIONS.map((action, idx) => (
               <button
                 key={idx}
                 type="button"
                 onClick={() => handleCommand(action.command)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/90 dark:bg-[#071d15]/90 border border-emerald-500/60 hover:border-emerald-400 hover:bg-emerald-500/10 text-gray-900 dark:text-gray-100 font-bold text-xs sm:text-[13px] shadow-xs transition-all hover:scale-105 active:scale-95"
+                className="text-xs sm:text-[13px] font-medium text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 dark:hover:text-emerald-300 hover:underline transition-colors"
               >
-                {action.type === "add" ? (
-                  <span className="w-4 h-4 rounded-full border border-emerald-500 flex items-center justify-center text-emerald-500 text-xs font-black">
-                    +
-                  </span>
-                ) : (
-                  <span className="w-4 h-4 rounded-full border border-emerald-500 flex items-center justify-center text-emerald-500 text-xs font-black">
-                    -
-                  </span>
-                )}
-                <span>{action.label}</span>
+                "{action.label}"
               </button>
             ))}
             </div>
