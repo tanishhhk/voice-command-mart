@@ -188,7 +188,7 @@ export const VoiceAssistant = () => {
               {/* Center Button Disk with metallic dark obsidian glassmorphism */}
               <button
                 className={`
-                  relative z-10 h-22 w-22 sm:h-24 sm:w-24 md:h-28 md:w-28 rounded-full flex items-center justify-center transition-all duration-300
+                  relative z-10 h-24 w-24 sm:h-28 sm:w-28 md:h-32 md:w-32 rounded-full flex items-center justify-center transition-all duration-300
                   ${isListening 
                       ? 'bg-gradient-to-br from-[#1f0a14] via-[#120710] to-[#0a0508] shadow-[inset_0_2px_12px_rgba(255,0,85,0.4)]' 
                       : 'bg-gradient-to-br from-[#141b2b] via-[#0d131f] to-[#070a10] shadow-[inset_0_2px_8px_rgba(255,255,255,0.18)] hover:from-[#1a2336] hover:to-[#0a0f18]'
