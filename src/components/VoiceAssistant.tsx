@@ -271,14 +271,12 @@ export const VoiceAssistant = () => {
             <p className="text-xs font-bold text-gray-800 dark:text-gray-200 mb-2">Try Saying this</p>
             <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               {QUICK_ACTIONS.map((action, idx) => (
-              <button
+              <span
                 key={idx}
-                type="button"
-                onClick={() => handleCommand(action.command)}
-                className="text-xs sm:text-[13px] font-medium text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 dark:hover:text-emerald-300 hover:underline transition-colors"
+                className="text-xs sm:text-[13px] font-medium text-emerald-600 dark:text-emerald-400"
               >
                 "{action.label}"
-              </button>
+              </span>
             ))}
             </div>
           </div>
