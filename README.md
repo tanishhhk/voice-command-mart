@@ -1,3 +1,9 @@
+<div align="center">
+  <img src="public/docs/hero.png" width="100%" alt="RashanHouse Voice Shopping Assistant" />
+</div>
+
+<br />
+
 # RashanHouse Voice Shopping Assistant
 
 Welcome to the **RashanHouse Voice Shopping Assistant** – a next-generation, premium e-commerce platform that reimagines grocery shopping with a voice-first approach. 
