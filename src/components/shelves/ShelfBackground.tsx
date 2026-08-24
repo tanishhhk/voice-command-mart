@@ -166,7 +166,7 @@ function ShelfProduct({
                                 }
                             });
                         }}
-                        className="absolute -bottom-1 -right-1 z-50 bg-emerald-500 hover:bg-emerald-400 text-white w-6 h-6 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-110 active:scale-95 opacity-90 sm:opacity-0 sm:group-hover/product:opacity-100 border-2 border-white/20 dark:border-[#080b11]"
+                        className="absolute -top-1.5 -left-1.5 z-50 bg-emerald-500 hover:bg-emerald-400 text-white w-6 h-6 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-110 active:scale-95 opacity-90 sm:opacity-0 sm:group-hover/product:opacity-100 border-2 border-white/20 dark:border-[#080b11]"
                         title="Add to cart"
                     >
                         <Plus className="w-3.5 h-3.5 stroke-[3]" />
@@ -746,10 +746,15 @@ export default function ShelfBackground() {
 
     return (
         <div className="w-full px-2 sm:px-4 md:px-6 pt-2 pb-24 box-border max-w-full">
-            {/* ── TOP HERO SECTION: Mic + Command Center ── */}
-            <div className="w-full mb-6 sm:mb-8 flex justify-center">
-                <div className="w-full max-w-5xl">
+            {/* ── TOP HERO SECTION: Mic + Command Center + Offers Banner ── */}
+            <div className="w-full mb-6 sm:mb-8 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-6">
+                {/* Left & Center: Mic + Command Center */}
+                <div className="flex-1 w-full min-w-0">
                     <VoiceAssistant />
+                </div>
+                {/* Right: Transitioning Offer Banner Card */}
+                <div className="w-full lg:w-[520px] xl:w-[580px] flex-shrink-0">
+                    <OffersBanner />
                 </div>
             </div>
 
