@@ -226,6 +226,9 @@ export const VoiceAssistant = () => {
           </div>
         </div>
 
+        {/* Vertical Divider */}
+        <div className="hidden lg:block w-px h-48 bg-gray-300 dark:bg-gray-700 mx-2" />
+
         {/* ── CENTER: Voice Command & Search Control Hub ─────────── */}
         <div className="flex-1 w-full max-w-[500px] xl:max-w-[560px] flex flex-col justify-center">
           {/* Header Text */}
@@ -239,8 +242,8 @@ export const VoiceAssistant = () => {
           </div>
 
           {/* Command Search Bar Input */}
-          <form onSubmit={handleInputSubmit} className="mt-3 relative w-full group">
-            <div className="relative flex items-center w-full rounded-2xl bg-white/90 dark:bg-[#071d15]/80 border-2 border-emerald-500 hover:border-emerald-400 focus-within:border-emerald-400 focus-within:ring-4 focus-within:ring-emerald-500/20 shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-all">
+          <form onSubmit={handleInputSubmit} className="mt-4 relative w-full group">
+            <div className="relative flex items-center w-full rounded-full bg-white/90 dark:bg-[#071d15]/80 border-2 border-emerald-500 hover:border-emerald-400 focus-within:border-emerald-400 focus-within:ring-4 focus-within:ring-emerald-500/20 shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-all">
               <div className="pl-4 pr-2 flex items-center pointer-events-none text-emerald-500 dark:text-emerald-400">
                 <Search className="w-5 h-5 stroke-[2.5]" />
               </div>
@@ -258,7 +261,7 @@ export const VoiceAssistant = () => {
                 type="button"
                 onClick={toggleListen}
                 aria-label="Speak command"
-                className="absolute right-3 p-1 rounded-lg text-emerald-500 dark:text-emerald-400 hover:bg-emerald-500/10 transition-colors"
+                className="absolute right-3 p-1 rounded-full text-emerald-500 dark:text-emerald-400 hover:bg-emerald-500/10 transition-colors"
               >
                 <Mic className="w-5 h-5" />
               </button>
@@ -266,8 +269,10 @@ export const VoiceAssistant = () => {
           </form>
 
           {/* Quick Action Suggestion Pills */}
-          <div className="mt-2.5 flex flex-wrap items-center gap-2">
-            {QUICK_ACTIONS.map((action, idx) => (
+          <div className="mt-4">
+            <p className="text-xs font-bold text-gray-800 dark:text-gray-200 mb-2">Try these examples</p>
+            <div className="flex flex-wrap items-center gap-2">
+              {QUICK_ACTIONS.map((action, idx) => (
               <button
                 key={idx}
                 type="button"
@@ -286,6 +291,7 @@ export const VoiceAssistant = () => {
                 <span>{action.label}</span>
               </button>
             ))}
+            </div>
           </div>
 
           {/* Action Feedback Message */}
