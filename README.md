@@ -17,26 +17,36 @@ The user interface feels like walking through a beautifully organized digital su
 ## 📸 Sneak Peek
 
 <div align="center">
-  <img src="public/docs/hero_vegetables.jpg" width="48%" alt="Fresh Vegetables Shelf" />
-  <img src="public/docs/fruits.png" width="48%" alt="Fresh Fruits Shelf" />
-</div>
-<br />
-<div align="center">
-  <img src="public/docs/fridge.png" width="48%" alt="Refrigerated Section" />
-  <img src="public/docs/pantry.png" width="48%" alt="Pantry Section" />
+
+<img src="public/docs/hero_vegetables.jpg" width="100%" alt="Fresh Vegetables Shelf" />
+
+<br /><br />
+
+<img src="public/docs/fridge.png" width="70%" alt="Refrigerated Section" />
+
+<br /><br />
+
+<img src="public/docs/pantry.png" width="70%" alt="Pantry Section" />
+
+<br /><br />
+
+<img src="public/docs/fruits.png" width="100%" alt="Fresh Fruits Shelf" />
+
 </div>
 
 ---
 
-## ✨ Features & Technical Highlights
+## Features & Technical Highlights
 
 ### 1. Advanced Voice Input
 - **Voice Command Recognition:** Allow users to effortlessly add items to their shopping list using completely hands-free voice commands (e.g., *"Add milk"*, *"I need apples"*).
 - **Natural Language Processing (NLP):** Powered by an intelligent AI layer that processes varied, conversational user phrases for maximum flexibility (e.g., it understands both *"I want to buy bananas"* and *"Add bananas to my list"* perfectly).
-- **Multilingual Support:** Ready to scale with voice commands supported across multiple languages, ensuring inclusivity and ease of use.
+- **Multilingual Voice Support:** Supports voice commands across multiple languages, allowing users to interact with the shopping assistant naturally in their preferred language.
 
-### 2. Smart AI Suggestions
-- **Predictive Product Recommendations:** Based on previous shopping history and consumption data, the assistant predicts and suggests items that the user is likely running low on (e.g., *"It looks like you're running low on bread"*).
+### 2. Smart AI Suggestions & Recommendations
+
+- **NL-Based Recommendations:** Uses Natural Language Understanding and shopping context to provide relevant product recommendations based on user commands and preferences.
+- **Running Low Items:** Identifies products that are running low based on mockup inventory and historical consumption data, helping users proactively add frequently used items to their shopping list.
 - **Seasonal Recommendations:** Intelligently curates and highlights items that are currently in season or on a flash sale.
 - **Contextual Substitutes:** Offers smart alternatives if a product is unavailable, or proactively suggests preferred options (e.g., if you frequently buy almond milk, it might suggest almond milk when you just say "milk").
 
@@ -56,7 +66,7 @@ The user interface feels like walking through a beautifully organized digital su
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 First, run the development server:
 
