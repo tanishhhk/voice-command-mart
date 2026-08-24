@@ -1,0 +1,195 @@
+@import "tailwindcss";
+
+@layer base {
+    :root {
+        --background: #050608;
+        --surface: #0b0d10;
+        --surface-2: #12161b;
+
+        --text-primary: #1c2a38;
+        --text-secondary: #4a5568;
+
+        --blue-glow: #2f7cff;
+        --green-glow: #22c55e;
+        --red-glow: #ef4444;
+
+        --border-subtle: rgba(255, 255, 255, 0.08);
+
+        /* Shelf (Dark Wood) */
+        --shelf-top-start: #4a2c1a;
+        --shelf-top-end: #3d2314;
+        --shelf-front-start: #2e1a0f;
+        --shelf-front-end: #1a0e08;
+        --shelf-border-top: rgba(255, 255, 255, 0.15);
+        /* Fridge (Light Mode - Darker Border per request) */
+        --fridge-outer-start: #a0b2c6;
+        --fridge-outer-end: #40576d;
+        --fridge-outer-mid1: #8298b0;
+        --fridge-outer-mid2: #5a768c;
+        --fridge-inner: #7b9ab4; /* One shade lighter than border */
+        --fridge-inner-end: #63839c; /* One shade lighter than border */
+        --fridge-border: #5a768c; 
+        --fridge-glass-start: rgba(255,255,255,0.7);
+        --fridge-glass-end: rgba(200,230,255,0.4);
+        --fridge-glass-border-bottom: #8cc5e3;
+        --fridge-glow-start: rgba(255, 210, 100, 0.45);
+        --fridge-glow-mid: rgba(255, 210, 100, 0.05);
+        --fridge-shadow: rgba(0,40,80,0.15);
+        --fridge-line-color: transparent; /* No lines in light mode */
+        --fridge-header-start: #f4f7fa;
+        --fridge-header-end: #eef3f7;
+        --fridge-header-text: #2f4f6f;
+        
+        /* Produce Section (Light Mode) */
+        --produce-header-color: #4a2c1a; /* Dark brown to match shelf */
+        --produce-header-shadow: 0px 2px 6px rgba(255, 255, 255, 1); /* Soft white shadow */
+        
+        --section-title-color: #4a2c1a; /* Dark brown */
+        
+        /* Navbar & Voice Texts */
+        --ration-color: #c05621; /* Darker orange */
+        --house-color: #1e4e3b; /* Dark green */
+        --subtitle-color: #374151; /* Gray-700 (dark) */
+        
+        --banner-text: #ffffff; /* White text on dark brown background */
+        --banner-subtext: #f1f5f9; /* Light slate for subtext */
+    }
+
+    .dark {
+        --text-primary: #ffffff;
+        --text-secondary: #a3aab5;
+        --text-shadow: 0px 2px 4px rgba(0,0,0,0.8);
+
+        /* Shelf (Light Wood/Metal) */
+        --shelf-top-start: #d1c1b0;
+        --shelf-top-end: #c0b0a0;
+        --shelf-front-start: #a39587;
+        --shelf-front-end: #8b7d70;
+        --shelf-border-top: rgba(255, 255, 255, 0.4);
+        --shelf-border-bottom: rgba(0, 0, 0, 0.4);
+        --shelf-fascia-border-top: rgba(255, 255, 255, 0.2);
+
+        /* Fridge (Darker Blue) */
+        --fridge-outer-start: #2a3c54;
+        --fridge-outer-end: #0f1724;
+        --fridge-outer-mid1: #1e2e45;
+        --fridge-outer-mid2: #162438;
+        --fridge-inner: #0b121c;
+        --fridge-inner-end: #070d16;
+        --fridge-border: #23354f;
+        --fridge-glass-start: rgba(255,255,255,0.15);
+        --fridge-glass-end: rgba(100,150,255,0.1);
+        --fridge-glass-border-bottom: #1e3a5f;
+        --fridge-glow-start: rgba(255, 220, 130, 0.35); 
+        --fridge-glow-mid: rgba(255, 220, 130, 0.08); 
+        --fridge-shadow: rgba(0,10,20,0.4);
+        --fridge-line-color: transparent; /* Lines removed from inside fridge for both themes */
+        --fridge-header-start: #0f172a;
+        --fridge-header-end: #090e17;
+        --fridge-header-text: #89b4e5;
+
+        /* Produce Section (Dark Mode) */
+        --produce-header-color: #f4ebd0; /* Original pale yellow */
+        --produce-header-shadow: none; /* No shadow */
+        
+        --section-title-color: #f4ebd0; /* Pale yellow */
+
+        /* Navbar & Voice Texts */
+        --ration-color: #f6ad55; /* Light orange */
+        --house-color: #34d399; /* Light green */
+        --subtitle-color: #9ca3af; /* Gray-400 */
+
+        --banner-text: #2a1d12; /* Dark text on pale yellow background */
+        --banner-subtext: #475569; /* Slate-600 */
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    html,
+    body {
+        background: var(--background);
+        color: var(--text-primary);
+        overflow-x: hidden;
+        min-height: 100vh;
+    }
+
+    body {
+        font-family: Inter, sans-serif;
+    }
+
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    button {
+        cursor: pointer;
+    }
+
+    ::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 999px;
+    }
+}
+
+@layer utilities {
+    .scrollbar-hide {
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
+    }
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none; /* Chrome, Safari and Opera */
+    }
+
+    .site-bg {
+        background-color: #b2d8ce; /* Darker Pastel teal */
+        /* Velvet texture using noise and soft sweeping gradients */
+        background-image: 
+            radial-gradient(circle at 30% 20%, rgba(255,255,255,0.6) 0%, transparent 60%),
+            radial-gradient(circle at 80% 80%, rgba(0,0,0,0.03) 0%, transparent 50%),
+            url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
+        background-size: 100% 100%, 100% 100%, 200px 200px;
+        box-shadow: inset 0 0 150px rgba(0,0,0,0.08);
+        transition: background-color 0.3s ease;
+    }
+
+    .dark .site-bg {
+        background-color: #0d1a14;
+        /* Velvet texture using noise and soft sweeping gradients */
+        background-image: 
+            radial-gradient(circle at 30% 20%, rgba(46, 115, 74, 0.2) 0%, transparent 60%),
+            radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.6) 0%, transparent 70%),
+            url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.12'/%3E%3C/svg%3E");
+        background-size: 100% 100%, 100% 100%, 200px 200px;
+        box-shadow: inset 0 0 200px rgba(0,0,0,0.8);
+    }
+}
+/* Google Translate Overrides */
+#google_translate_element {
+    display: none !important;
+}
+
+.goog-te-banner-frame.skiptranslate {
+    display: none !important;
+}
+
+body {
+    top: 0px !important;
+}
+
+.goog-text-highlight {
+    background: none !important;
+    box-shadow: none !important;
+}
+
+.skiptranslate > iframe {
+    display: none !important;
+}
