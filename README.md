@@ -6,11 +6,13 @@
 
 # RashanHouse Voice Shopping Assistant
 
-Welcome to the **RashanHouse Voice Shopping Assistant** – a next-generation, premium e-commerce platform that reimagines grocery shopping with a voice-first approach. 
+**RashanHouse Voice Shopping Assistant** is a voice-based shopping list manager with smart suggestions. It allows users to manage their shopping lists naturally using voice commands such as *"Add 2L milk"*, *"Remove 1kg apples"*, or *"Add bread and eggs"*.
 
-RashanHouse combines a beautiful, warm, minimalist design with powerful Voice Command Recognition and Natural Language Processing (NLP). Instead of manually searching, clicking, and adjusting quantities, users can simply tap the central glowing microphone and naturally speak their grocery needs. The assistant handles the rest—instantly adding items to the cart, automatically sorting them into categories, and suggesting relevant running-low items based on smart historical data.
+The assistant uses **Natural Language Processing (NLP)** to understand conversational shopping commands, extract items and quantities, and perform the appropriate list actions. Users can add, remove, and modify items without manually navigating through a traditional shopping interface.
 
-The user interface feels like walking through a beautifully organized digital supermarket. From the chilled refrigerated section to the fresh produce aisles, the visual experience is designed to be as premium as it is accessible.
+RashanHouse also provides smart suggestions based on **mockup inventory and historical consumption data**, including **Running Low** items, seasonal recommendations, and contextual product suggestions. **Multilingual voice support** allows users to interact with the assistant naturally in their preferred language.
+
+The interface is designed around a **voice-first experience**, with a prominent interactive microphone, command input, real-time visual feedback, and an organized view of grocery items.
 
 ---
 
@@ -39,41 +41,49 @@ The user interface feels like walking through a beautifully organized digital su
 ## Features & Technical Highlights
 
 ### 1. Advanced Voice Input
-- **Voice Command Recognition:** Allow users to effortlessly add items to their shopping list using completely hands-free voice commands (e.g., *"Add milk"*, *"I need apples"*).
-- **Natural Language Processing (NLP):** Powered by an intelligent AI layer that processes varied, conversational user phrases for maximum flexibility (e.g., it understands both *"I want to buy bananas"* and *"Add bananas to my list"* perfectly).
+
+- **Voice Command Recognition:** Allows users to manage their shopping list using hands-free voice commands such as *"Add milk"* or *"I need apples"*.
+- **Natural Language Processing (NLP):** Understands varied conversational phrases and maps them to appropriate shopping list actions. For example, *"I want to buy bananas"* and *"Add bananas to my list"* can both be interpreted as an add-item command.
 - **Multilingual Voice Support:** Supports voice commands across multiple languages, allowing users to interact with the shopping assistant naturally in their preferred language.
 
 ### 2. Smart AI Suggestions & Recommendations
 
 - **NL-Based Recommendations:** Uses Natural Language Understanding and shopping context to provide relevant product recommendations based on user commands and preferences.
-- **Running Low Items:** Identifies products that are running low based on mockup inventory and historical consumption data, helping users proactively add frequently used items to their shopping list.
-- **Seasonal Recommendations:** Intelligently curates and highlights items that are currently in season or on a flash sale.
-- **Contextual Substitutes:** Offers smart alternatives if a product is unavailable, or proactively suggests preferred options (e.g., if you frequently buy almond milk, it might suggest almond milk when you just say "milk").
+- **Running Low Items:** Identifies products that are running low using mockup inventory and historical consumption data, helping users proactively add frequently used items to their shopping list.
+- **Seasonal Recommendations:** Highlights products based on seasonal availability and promotional context.
+- **Contextual Suggestions:** Suggests relevant alternatives or preferred products based on the user's shopping context. For example, if a user frequently purchases almond milk, the assistant can suggest it when they simply say *"Add milk"*.
 
 ### 3. Shopping List Management
-- **Add/Remove Capabilities:** Add, remove, or modify existing items purely through voice commands (e.g., *"Remove milk from my list"*).
-- **Automatic Categorization:** Automatically groups and categorizes items logically in the cart (e.g., Dairy, Produce, Snacks) for better visual organization and faster checkout.
-- **Smart Quantity Parsing:** Precisely parses and specifies quantities spoken naturally by the user (e.g., *"Add 2 bottles of water"* or *"Buy 5 oranges"*).
 
-### 4. Voice-Activated Search
-- **Faceted Item Search:** Allow users to find specific items by voice, including fine-grained details like brand names, sizes, or specific types (e.g., *"Find me organic apples"*).
-- **Intelligent Price & Brand Filtering:** Voice-based filtering allows for complex constraints right from the search phrase (e.g., *"Find toothpaste under $5"*).
+- **Add, Remove & Modify:** Users can add, remove, or modify shopping list items entirely through natural language commands, such as *"Remove milk from my list"*.
+- **Automatic Categorization:** Groups items into logical categories such as Dairy, Produce, and Snacks for better organization.
+- **Smart Quantity Parsing:** Extracts quantities and units from natural language commands such as *"Add 2 bottles of water"* or *"Buy 5 oranges"*.
+- **Multi-Item Commands:** Supports commands containing multiple actions or items, allowing users to update their shopping list more efficiently.
+
+### 4. Voice-Activated Item Search
+
+- **Natural Language Item Search:** Allows users to find specific grocery items using voice commands, including details such as product names, brands, sizes, and types.
+- **Context-Aware Queries:** Understands commands containing multiple constraints and shopping preferences.
+- **Price & Brand Filtering:** Supports natural language queries involving product constraints such as *"Find toothpaste under $5"* or specific brand preferences.
 
 ### 5. Premium UI/UX Design
-- **Minimalist, Warm Interface:** A highly polished, easy-to-use interface built with a specific beige/warm theme that evokes a welcoming "home" feel, ensuring the shopping list and products take center stage.
-- **Dynamic Visual Feedback:** A continuous RGB orbit microphone, interactive hover cards, and real-time visual confirmations ensure users are always in sync with their voice actions.
-- **Responsive & Voice-Optimized:** Built and strictly optimized for smooth performance across mobile devices and hands-free, voice-only interactions.
+
+- **Minimalist, Warm Interface:** A polished, easy-to-use interface built around a warm, home-inspired visual language.
+- **Voice-First Interaction:** A prominent RGB orbit microphone serves as the primary interaction point for managing the shopping list.
+- **Dynamic Visual Feedback:** Interactive states, voice-wave animations, hover cards, and real-time confirmations keep users informed about their actions.
+- **Organized Grocery View:** Grocery items are presented through visually distinct sections such as Refrigerated, Pantry, Fresh Vegetables, and Fruits.
+- **Responsive & Voice-Optimized:** Designed for smooth interaction across devices, including hands-free voice-based shopping list management.
 
 ---
 
-## Live deployment
+## 🌐 Live Deployment
 
 **Try RashanHouse live:**  
 👉 [https://raashan-house.vercel.app/](https://raashan-house.vercel.app/)
 
 ---
 
-## Getting Started
+## 🚀 Getting Started
 
 First, run the development server:
 
@@ -86,4 +96,5 @@ pnpm dev
 # or
 bun dev
 ```
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the application in action.
+
+- Open http://localhost:3000 in your browser to see the application in action.
