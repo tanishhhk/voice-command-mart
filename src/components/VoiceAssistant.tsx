@@ -158,11 +158,11 @@ export const VoiceAssistant = () => {
 
             {/* Ambient glowing blurred RGB aura */}
             <div
-              className="absolute -inset-1.5 rounded-full pointer-events-none"
+              className="absolute -inset-2.5 rounded-full pointer-events-none"
               style={{
                 background: "conic-gradient(from 0deg, #ff0055, #ff7700, #ffee00, #00ff66, #00e5ff, #7c3aed, #ff0055)",
-                filter: isListening ? "blur(16px)" : "blur(10px)",
-                opacity: isListening ? 0.95 : 0.65,
+                filter: isListening ? "blur(20px)" : "blur(14px)",
+                opacity: isListening ? 1 : 0.8,
                 animation: isListening 
                   ? "rgbTraceContinuous 1.2s linear infinite" 
                   : "rgbTraceContinuous 3.5s linear infinite",
@@ -172,23 +172,21 @@ export const VoiceAssistant = () => {
 
             {/* Sharp RGB Tracing Border Container */}
             <div
-              className="relative rounded-full p-[3.5px] overflow-hidden flex items-center justify-center transition-transform duration-300 group-hover:scale-105 active:scale-95 shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
+              className="relative rounded-full p-[4.5px] overflow-hidden flex items-center justify-center transition-transform duration-300 group-hover:scale-105 active:scale-95 shadow-[0_10px_30px_rgba(0,0,0,0.6)]"
             >
               {/* Rotating Conic Gradient Layer creating continuous RGB line trace */}
               <div
                 className="absolute -inset-[100%] pointer-events-none"
                 style={{
-                  background: "conic-gradient(from 0deg, #ff0055, #ff7700, #ffee00, #00ff66, #00e5ff, #9333ea, #ff0055)",
-                  animation: isListening 
-                    ? "rgbTraceContinuous 1.2s linear infinite" 
-                    : "rgbTraceContinuous 3.5s linear infinite",
+                  background: "conic-gradient(from 0deg, transparent 60%, #fff 80%, #ff0055, #00ff66, transparent)",
+                  animation: "rgbTraceContinuous 2.5s linear infinite",
                 }}
               />
 
               {/* Center Button Disk with metallic dark obsidian glassmorphism */}
               <button
                 className={`
-                  relative z-10 h-24 w-24 sm:h-28 sm:w-28 md:h-32 md:w-32 rounded-full flex items-center justify-center transition-all duration-300
+                  relative z-10 h-28 w-28 sm:h-32 sm:w-32 md:h-40 md:w-40 rounded-full flex items-center justify-center transition-all duration-300
                   ${isListening 
                       ? 'bg-gradient-to-br from-[#1f0a14] via-[#120710] to-[#0a0508] shadow-[inset_0_2px_12px_rgba(255,0,85,0.4)]' 
                       : 'bg-gradient-to-br from-[#141b2b] via-[#0d131f] to-[#070a10] shadow-[inset_0_2px_8px_rgba(255,255,255,0.18)] hover:from-[#1a2336] hover:to-[#0a0f18]'

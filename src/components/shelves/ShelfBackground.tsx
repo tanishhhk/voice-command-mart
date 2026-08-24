@@ -747,7 +747,7 @@ export default function ShelfBackground() {
     return (
         <div className="w-full px-2 sm:px-4 md:px-6 pt-2 pb-24 box-border max-w-full">
             {/* ── TOP HERO SECTION: Mic + Command Center + Offers Banner ── */}
-            <div className="w-full mb-6 sm:mb-8 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-8 bg-[#fdfaf5] dark:bg-[#12161f] border border-amber-900/10 dark:border-white/10 rounded-3xl p-4 sm:p-6 md:p-8 shadow-sm">
+            <div className="w-full mb-6 sm:mb-8 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-8 border border-amber-900/10 dark:border-white/10 rounded-3xl p-4 sm:p-6 md:p-8">
                 {/* Left & Center: Mic + Command Center */}
                 <div className="flex-1 w-full min-w-0 pr-0 lg:pr-4">
                     <VoiceAssistant />
