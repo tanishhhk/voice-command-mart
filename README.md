@@ -66,6 +66,13 @@ The user interface feels like walking through a beautifully organized digital su
 
 ---
 
+## Live deployment
+
+**Try RashanHouse live:**  
+👉 [https://raashan-house.vercel.app/](https://raashan-house.vercel.app/)
+
+---
+
 ## Getting Started
 
 First, run the development server:
@@ -79,5 +86,4 @@ pnpm dev
 # or
 bun dev
 ```
-
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the application in action.
