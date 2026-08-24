@@ -65,18 +65,29 @@ export const LiveAudioVisualizer = ({ isListening }: { isListening: boolean }) =
           
           let startX = (width - totalWidth) / 2;
           
+          const BAR_COLORS = [
+            '#ec4899', // Pink
+            '#f59e0b', // Amber/Yellow
+            '#10b981', // Emerald
+            '#00f0ff', // Cyan
+            '#10b981', // Emerald
+            '#f59e0b', // Amber/Yellow
+            '#ec4899', // Pink
+            '#00f0ff'  // Cyan
+          ];
+          
           for (let i = 0; i < numBars; i++) {
             // Pick some distinct frequencies
             const dataIndex = Math.floor((i / numBars) * (bufferLength / 2));
             const value = dataArray[dataIndex];
             
-            // value is 0-255, map to height (min 4px, max 32px)
+            // value is 0-255, map to height (min 4px, max 28px)
             const percent = value / 255;
             const barHeight = Math.max(4, percent * height);
             
             const y = (height - barHeight) / 2;
             
-            ctx.fillStyle = '#10b981'; // emerald-500
+            ctx.fillStyle = BAR_COLORS[i % BAR_COLORS.length];
             ctx.beginPath();
             ctx.roundRect(startX, y, barWidth, barHeight, 2);
             ctx.fill();
@@ -100,10 +111,29 @@ export const LiveAudioVisualizer = ({ isListening }: { isListening: boolean }) =
       if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
         audioContextRef.current.close();
       }
-      // Clear canvas
+      // Draw resting soundwave dots/bars
       if (canvasRef.current) {
         const ctx = canvasRef.current.getContext('2d');
-        if (ctx) ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+        if (ctx) {
+          ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+          const numBars = 8;
+          const barWidth = 4;
+          const spacing = 4;
+          const totalWidth = (barWidth * numBars) + (spacing * (numBars - 1));
+          let startX = (canvasRef.current.width - totalWidth) / 2;
+          const BAR_COLORS = ['#ec4899', '#f59e0b', '#10b981', '#00f0ff', '#10b981', '#f59e0b', '#ec4899', '#00f0ff'];
+          const heights = [4, 6, 10, 16, 12, 8, 5, 4];
+          
+          for (let i = 0; i < numBars; i++) {
+            const h = heights[i % heights.length];
+            const y = (canvasRef.current.height - h) / 2;
+            ctx.fillStyle = BAR_COLORS[i % BAR_COLORS.length];
+            ctx.beginPath();
+            ctx.roundRect(startX, y, barWidth, h, 2);
+            ctx.fill();
+            startX += barWidth + spacing;
+          }
+        }
       }
     }
 

@@ -117,6 +117,7 @@ export const VoiceAssistant = () => {
         type: "ADD_ITEM",
         payload: {
           name: product.name,
+          category: product.category,
           quantity: 1,
           unit: product.quantity || "1 pc"
         }
@@ -139,9 +140,9 @@ export const VoiceAssistant = () => {
       `}</style>
 
       {/* ── Main Hero Row: Mic + Search Bar ─────────────────────── */}
-      <div className="w-full flex flex-col sm:flex-row items-center sm:items-start lg:items-center gap-5 lg:gap-6">
+      <div className="w-full flex flex-col sm:flex-row items-center sm:items-start lg:items-center gap-6 lg:gap-8">
         
-        {/* ── LEFT: The Blue Skeleton Mic ──────────────────────── */}
+        {/* ── LEFT: The Continuous RGB Orbit Mic ─────────────────── */}
         <div className="flex flex-col items-center flex-shrink-0">
           <div className="relative group cursor-pointer flex items-center justify-center" onClick={toggleListen}>
             {/* Soundwave expanding aura when listening */}
@@ -149,7 +150,7 @@ export const VoiceAssistant = () => {
               <div 
                 className="absolute -inset-3 rounded-full pointer-events-none"
                 style={{
-                  background: "radial-gradient(circle, rgba(239, 68, 68, 0.4) 0%, rgba(168, 85, 247, 0.2) 50%, transparent 70%)",
+                  background: "radial-gradient(circle, rgba(239, 68, 68, 0.45) 0%, rgba(168, 85, 247, 0.25) 50%, transparent 70%)",
                   animation: "soundwavePingHero 1.5s cubic-bezier(0, 0, 0.2, 1) infinite",
                 }}
               />
@@ -159,8 +160,8 @@ export const VoiceAssistant = () => {
             <div
               className="absolute -inset-1.5 rounded-full pointer-events-none"
               style={{
-                background: "conic-gradient(from 0deg, #3b82f6, #00f0ff, #7c3aed, #ec4899, #f59e0b, #10b981, #3b82f6)",
-                filter: isListening ? "blur(14px)" : "blur(8px)",
+                background: "conic-gradient(from 0deg, #ff0055, #ff7700, #ffee00, #00ff66, #00e5ff, #7c3aed, #ff0055)",
+                filter: isListening ? "blur(16px)" : "blur(10px)",
                 opacity: isListening ? 0.95 : 0.65,
                 animation: isListening 
                   ? "rgbTraceContinuous 1.2s linear infinite" 
@@ -171,81 +172,85 @@ export const VoiceAssistant = () => {
 
             {/* Sharp RGB Tracing Border Container */}
             <div
-              className="relative rounded-full p-[3px] overflow-hidden flex items-center justify-center transition-transform duration-300 group-hover:scale-105 active:scale-95 shadow-[0_8px_24px_rgba(0,0,0,0.12)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.6)]"
+              className="relative rounded-full p-[3.5px] overflow-hidden flex items-center justify-center transition-transform duration-300 group-hover:scale-105 active:scale-95 shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
             >
-              {/* Rotating Conic Gradient Layer */}
+              {/* Rotating Conic Gradient Layer creating continuous RGB line trace */}
               <div
                 className="absolute -inset-[100%] pointer-events-none"
                 style={{
-                  background: "conic-gradient(from 0deg, #2563eb, #00f0ff, #7c3aed, #ec4899, #f59e0b, #10b981, #2563eb)",
+                  background: "conic-gradient(from 0deg, #ff0055, #ff7700, #ffee00, #00ff66, #00e5ff, #9333ea, #ff0055)",
                   animation: isListening 
                     ? "rgbTraceContinuous 1.2s linear infinite" 
                     : "rgbTraceContinuous 3.5s linear infinite",
                 }}
               />
 
-              {/* Center Button Disk */}
+              {/* Center Button Disk with metallic dark obsidian glassmorphism */}
               <button
                 className={`
-                  relative z-10 h-18 w-18 sm:h-20 sm:w-20 md:h-22 md:w-22 rounded-full flex items-center justify-center transition-all duration-300
+                  relative z-10 h-22 w-22 sm:h-24 sm:w-24 md:h-28 md:w-28 rounded-full flex items-center justify-center transition-all duration-300
                   ${isListening 
-                      ? 'bg-rose-50 dark:bg-[#1a0f14] shadow-[inset_0_2px_8px_rgba(239,68,68,0.2)]' 
-                      : 'bg-white dark:bg-[#0d131f] shadow-[inset_0_1px_4px_rgba(0,0,0,0.08)] hover:bg-blue-50/50 dark:hover:bg-[#111928]'
+                      ? 'bg-gradient-to-br from-[#1f0a14] via-[#120710] to-[#0a0508] shadow-[inset_0_2px_12px_rgba(255,0,85,0.4)]' 
+                      : 'bg-gradient-to-br from-[#141b2b] via-[#0d131f] to-[#070a10] shadow-[inset_0_2px_8px_rgba(255,255,255,0.18)] hover:from-[#1a2336] hover:to-[#0a0f18]'
                   }
                 `}
                 aria-label={isListening ? "Stop listening" : "Start voice shopping"}
               >
+                {/* Specular light reflection on top half */}
+                <div 
+                  className="absolute top-1 left-2.5 right-2.5 h-[32%] rounded-t-full pointer-events-none opacity-25"
+                  style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.9) 0%, transparent 100%)" }}
+                />
+
                 {isListening ? (
-                  <Square className="relative z-10 w-6 h-6 sm:w-7 sm:h-7 text-red-500 fill-red-500 drop-shadow-md" />
+                  <Square className="relative z-10 w-7 h-7 sm:w-8 sm:h-8 text-red-500 fill-red-500 drop-shadow-[0_0_12px_rgba(239,68,68,0.8)]" />
                 ) : (
-                  <Mic className="relative z-10 w-7 h-7 sm:w-8 sm:h-8 text-[#2563eb] dark:text-[#38bdf8] drop-shadow-[0_0_10px_rgba(37,99,235,0.4)] transition-all duration-300 group-hover:scale-110" />
+                  <Mic className="relative z-10 w-8 h-8 sm:w-10 sm:h-10 text-white drop-shadow-[0_0_12px_rgba(0,240,255,0.7)] transition-all duration-300 group-hover:text-[#00f0ff] group-hover:drop-shadow-[0_0_16px_rgba(0,240,255,0.95)]" />
                 )}
               </button>
             </div>
           </div>
 
-          {/* Text underneath mic */}
-          <p className="mt-1.5 text-xs font-black text-gray-900 dark:text-gray-100 tracking-wide text-center drop-shadow-sm">
+          {/* Text underneath mic - Clean bold text with NO background box */}
+          <p className="mt-2 text-xs sm:text-[13px] font-bold text-gray-800 dark:text-gray-200 tracking-wide text-center drop-shadow-xs">
             {isListening ? (
-              <span className="text-emerald-600 dark:text-emerald-400 font-bold animate-pulse">Listening...</span>
+              <span className="text-emerald-500 font-bold animate-pulse">Listening... Speak now</span>
             ) : (
-              "Tap to speak"
+              "Tap the mic to speak"
             )}
           </p>
 
-          {/* Audio Visualizer */}
-          {isListening && (
-            <div className="mt-1 flex justify-center">
-              <LiveAudioVisualizer isListening={isListening} />
-            </div>
-          )}
+          {/* Multi-colored Audio Visualizer directly under text */}
+          <div className="mt-1 flex justify-center">
+            <LiveAudioVisualizer isListening={isListening} />
+          </div>
         </div>
 
-        {/* ── CENTER: Clean, Enhanced Search & Voice Hub ─────────── */}
-        <div className="w-full max-w-[400px] xl:max-w-[440px] flex flex-col justify-center">
-          {/* Header Text - Sleek & Uncluttered */}
+        {/* ── CENTER: Voice Command & Search Control Hub ─────────── */}
+        <div className="flex-1 w-full max-w-[500px] xl:max-w-[560px] flex flex-col justify-center">
+          {/* Header Text */}
           <div>
-            <h2 className="text-lg sm:text-xl md:text-2xl font-black text-gray-900 dark:text-white tracking-tight leading-snug">
-              What would you like to buy?
+            <h2 className="text-xl sm:text-2xl md:text-[28px] font-black text-gray-900 dark:text-white tracking-tight leading-tight">
+              What would you like to add or remove?
             </h2>
-            <p className="text-xs text-gray-600 dark:text-gray-400 font-medium">
-              Speak or type your items
+            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-0.5 font-medium">
+              Just speak or type your command
             </p>
           </div>
 
           {/* Command Search Bar Input */}
-          <form onSubmit={handleInputSubmit} className="mt-2.5 relative w-full group">
-            <div className="relative flex items-center w-full rounded-xl bg-white dark:bg-gray-900 border-2 border-emerald-600/70 dark:border-emerald-500/60 hover:border-emerald-600 dark:hover:border-emerald-500 focus-within:border-emerald-600 focus-within:ring-3 focus-within:ring-emerald-500/20 shadow-xs transition-all">
-              <div className="pl-3 pr-2 flex items-center pointer-events-none text-emerald-600 dark:text-emerald-400">
-                <Search className="w-4 h-4" />
+          <form onSubmit={handleInputSubmit} className="mt-3 relative w-full group">
+            <div className="relative flex items-center w-full rounded-2xl bg-white/90 dark:bg-[#071d15]/80 border-2 border-emerald-500 hover:border-emerald-400 focus-within:border-emerald-400 focus-within:ring-4 focus-within:ring-emerald-500/20 shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-all">
+              <div className="pl-4 pr-2 flex items-center pointer-events-none text-emerald-500 dark:text-emerald-400">
+                <Search className="w-5 h-5 stroke-[2.5]" />
               </div>
 
               <input
                 type="text"
                 value={typedInput}
                 onChange={(e) => setTypedInput(e.target.value)}
-                placeholder="Try: 2L milk, 1kg apples, bread..."
-                className="w-full py-2 pr-9 bg-transparent text-xs sm:text-sm font-semibold text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 outline-none"
+                placeholder="Try: Add 2L milk, Remove 1kg apples, Add bread..."
+                className="w-full py-2.5 sm:py-3 pr-12 bg-transparent text-xs sm:text-sm font-semibold text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-400 outline-none"
               />
 
               {/* Mic trigger inside search bar */}
@@ -253,26 +258,30 @@ export const VoiceAssistant = () => {
                 type="button"
                 onClick={toggleListen}
                 aria-label="Speak command"
-                className="absolute right-2 p-1 rounded-lg text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-colors"
+                className="absolute right-3 p-1 rounded-lg text-emerald-500 dark:text-emerald-400 hover:bg-emerald-500/10 transition-colors"
               >
-                <Mic className="w-3.5 h-3.5" />
+                <Mic className="w-5 h-5" />
               </button>
             </div>
           </form>
 
           {/* Quick Action Suggestion Pills */}
-          <div className="mt-2 flex flex-wrap items-center gap-1.5">
+          <div className="mt-2.5 flex flex-wrap items-center gap-2">
             {QUICK_ACTIONS.map((action, idx) => (
               <button
                 key={idx}
                 type="button"
                 onClick={() => handleCommand(action.command)}
-                className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:border-emerald-500 dark:hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-gray-900 dark:text-gray-100 font-bold text-[11px] shadow-xs transition-all hover:scale-105 active:scale-95"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/90 dark:bg-[#071d15]/90 border border-emerald-500/60 hover:border-emerald-400 hover:bg-emerald-500/10 text-gray-900 dark:text-gray-100 font-bold text-xs sm:text-[13px] shadow-xs transition-all hover:scale-105 active:scale-95"
               >
                 {action.type === "add" ? (
-                  <Plus className="w-3 h-3 text-emerald-600 font-extrabold" />
+                  <span className="w-4 h-4 rounded-full border border-emerald-500 flex items-center justify-center text-emerald-500 text-xs font-black">
+                    +
+                  </span>
                 ) : (
-                  <Minus className="w-3 h-3 text-rose-600 font-extrabold" />
+                  <span className="w-4 h-4 rounded-full border border-emerald-500 flex items-center justify-center text-emerald-500 text-xs font-black">
+                    -
+                  </span>
                 )}
                 <span>{action.label}</span>
               </button>
@@ -281,9 +290,9 @@ export const VoiceAssistant = () => {
 
           {/* Action Feedback Message */}
           {feedback && (
-            <div className="mt-1.5 flex items-center gap-2 animate-in fade-in duration-200">
-              <span className="text-xs font-bold px-2.5 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-700 text-emerald-900 dark:text-emerald-200 shadow-xs flex items-center gap-1">
-                <Sparkles className="w-3 h-3 text-emerald-600" />
+            <div className="mt-2 flex items-center gap-2 animate-in fade-in duration-200">
+              <span className="text-xs font-bold px-3 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-700 text-emerald-900 dark:text-emerald-200 shadow-xs flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
                 {feedback}
               </span>
             </div>

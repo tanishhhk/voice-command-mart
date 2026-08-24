@@ -114,6 +114,7 @@ function ShelfProduct({
                             type: "ADD_ITEM",
                             payload: {
                                 name: product.name,
+                                category: product.category,
                                 quantity: 1,
                                 unit: product.quantity || "1 pc"
                             }
@@ -445,6 +446,7 @@ function ProduceSection({ category, title }: { category: Product["category"], ti
                 type: "ADD_ITEM",
                 payload: {
                     name: product.name,
+                    category: product.category,
                     quantity: 1,
                     unit: product.quantity || "1 pc"
                 }

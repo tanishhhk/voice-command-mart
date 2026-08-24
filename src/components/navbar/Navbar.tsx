@@ -45,7 +45,7 @@ function SearchResultsPopup({ term, isVisible, onClose }: { term: string; isVisi
     const handleSelectProduct = (product: typeof products[0]) => {
         dispatch({
             type: "ADD_ITEM",
-            payload: { name: product.name, quantity: 1, unit: product.quantity || "1 pc" }
+            payload: { name: product.name, category: product.category, quantity: 1, unit: product.quantity || "1 pc" }
         });
         onClose();
     };
@@ -174,39 +174,39 @@ export default function Navbar() {
                     <button 
                         onClick={toggleTheme} 
                         aria-label="Toggle theme"
-                        className="flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-white/95 dark:bg-gray-800/95 text-gray-900 dark:text-gray-100 font-bold text-xs sm:text-sm shadow-sm border border-gray-300 dark:border-gray-700 hover:border-emerald-500 dark:hover:border-emerald-400 hover:scale-105 active:scale-95 transition-all"
+                        className="flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-[#071d15]/90 border border-emerald-500/40 text-white font-bold text-xs sm:text-sm shadow-sm hover:border-emerald-400 hover:scale-105 active:scale-95 transition-all"
                     >
                         {isDark ? (
-                            <Sun size={17} className="text-amber-500 fill-amber-500" />
+                            <Sun size={15} className="text-amber-400 fill-amber-400" />
                         ) : (
-                            <Moon size={17} className="text-indigo-600 fill-indigo-600" />
+                            <Moon size={15} className="text-indigo-300 fill-indigo-300" />
                         )}
-                        <span className="hidden sm:inline font-semibold">{isDark ? "Light" : "Dark"}</span>
+                        <span className="font-semibold text-xs sm:text-sm">{isDark ? "Light" : "Dark"}</span>
                     </button>
                     
                     {/* Cart Button */}
                     <button 
                         onClick={toggleCart} 
                         aria-label="View Cart"
-                        className="relative flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm shadow-md hover:scale-105 active:scale-95 transition-all"
+                        className="relative flex items-center gap-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm shadow-md hover:scale-105 active:scale-95 transition-all"
                     >
-                        <ShoppingCart size={17} className="text-white" />
+                        <ShoppingCart size={16} className="text-white" />
                         <span className="font-bold">Cart</span>
                         {totalCartCount > 0 && (
-                            <span className="ml-1 bg-white text-emerald-700 text-[11px] font-black rounded-full h-5 min-w-5 px-1.5 flex items-center justify-center shadow-sm">
+                            <span className="ml-1 bg-white text-emerald-800 text-[10px] font-black rounded-full h-4.5 min-w-4.5 px-1.5 flex items-center justify-center shadow-xs">
                                 {totalCartCount > 99 ? '99+' : totalCartCount}
                             </span>
                         )}
                     </button>
 
                     {/* Language Selector */}
-                    <div className="relative flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl bg-white/95 dark:bg-gray-800/95 text-gray-900 dark:text-gray-100 font-bold text-xs sm:text-sm shadow-sm border border-gray-300 dark:border-gray-700 hover:border-emerald-500 transition-all">
-                        <Globe size={17} className="text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+                    <div className="relative flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-[#071d15]/90 border border-emerald-500/40 text-white font-bold text-xs sm:text-sm shadow-sm hover:border-emerald-400 transition-all">
+                        <Globe size={15} className="text-emerald-400 flex-shrink-0" />
                         <select 
                             value={selectedLang}
                             aria-label="Select language"
                             onChange={(e) => handleLanguageChange(e.target.value)}
-                            className="bg-transparent text-xs sm:text-sm outline-none cursor-pointer text-gray-900 dark:text-gray-100 font-bold appearance-none pr-3"
+                            className="bg-transparent text-xs sm:text-sm outline-none cursor-pointer text-white font-bold appearance-none pr-3"
                         >
                             {LANGUAGES.map(lang => (
                                 <option key={lang.code} value={lang.code} className="text-black bg-white dark:bg-gray-900 dark:text-gray-100">
@@ -214,7 +214,7 @@ export default function Navbar() {
                                 </option>
                             ))}
                         </select>
-                        <span className="pointer-events-none absolute right-2 text-gray-600 dark:text-gray-400 text-[9px]">▼</span>
+                        <span className="pointer-events-none absolute right-2.5 text-emerald-400 text-[8px]">▼</span>
                     </div>
                 </div>
             </div>
