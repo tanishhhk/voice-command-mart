@@ -52,10 +52,10 @@ export default function OffersBanner() {
     const TagIcon = slide.tagIcon;
 
     return (
-        <div className="w-full relative h-[175px] sm:h-[190px] rounded-3xl overflow-hidden shadow-2xl border border-black/10 dark:border-white/10 group transition-all">
+        <div className="w-full relative h-[190px] sm:h-[220px] lg:h-[240px] rounded-3xl overflow-hidden shadow-2xl border border-black/10 dark:border-white/10 group transition-all">
             {/* Background transition wrapper */}
             <div 
-                className="absolute inset-0 transition-all duration-700 ease-in-out p-5 sm:p-6 flex flex-col justify-between"
+                className="absolute inset-0 transition-all duration-700 ease-in-out p-6 sm:p-8 flex flex-col justify-between"
                 style={{
                     background: slide.cardBg,
                     boxShadow: "inset 0 1px 2px rgba(255,255,255,0.25)",

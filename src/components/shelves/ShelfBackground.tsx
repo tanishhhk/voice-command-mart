@@ -753,7 +753,7 @@ export default function ShelfBackground() {
                     <VoiceAssistant />
                 </div>
                 {/* Right: Transitioning Offer Banner Card */}
-                <div className="w-full lg:w-[45%] xl:w-[42%] flex-shrink-0">
+                <div className="w-full lg:w-[48%] xl:w-[45%] flex-shrink-0">
                     <OffersBanner />
                 </div>
             </div>
