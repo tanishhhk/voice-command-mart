@@ -5,18 +5,18 @@
 
 @layer base {
     :root {
-        --background: #faf6eb;
+        --background: #eddcc6; /* Proper warm natural beige */
         --surface: #ffffff;
-        --surface-2: #f4ede0;
+        --surface-2: #e4d0b8;
 
-        --text-primary: #111827;
-        --text-secondary: #374151;
+        --text-primary: #1c1917;
+        --text-secondary: #44403c;
 
         --blue-glow: #2563eb;
-        --green-glow: #16a34a;
-        --red-glow: #dc2626;
+        --green-glow: #10b981;
+        --red-glow: #ef4444;
 
-        --border-subtle: rgba(0, 0, 0, 0.08);
+        --border-subtle: rgba(0, 0, 0, 0.1);
 
         /* Shelf (Dark Wood) */
         --shelf-top-start: #4a2c1a;
@@ -45,15 +45,15 @@
         --fridge-header-text: #1e3a5f;
         
         /* Produce Section (Light Mode) */
-        --produce-header-color: #3d2314;
+        --produce-header-color: #2b1810;
         --produce-header-shadow: 0px 1px 3px rgba(255, 255, 255, 0.9);
         
-        --section-title-color: #3d2314;
+        --section-title-color: #2b1810;
         
         /* Navbar & Brand */
-        --ration-color: #c05621;
-        --house-color: #166534;
-        --subtitle-color: #4b5563;
+        --ration-color: #f97316;
+        --house-color: #10b981;
+        --subtitle-color: #78716c;
         
         --banner-text: #ffffff;
         --banner-subtext: #f1f5f9;
@@ -156,24 +156,24 @@
     }
 
     .site-bg {
-        background-color: #faf6eb; /* Very light warm yellow/beige */
+        background-color: #f5ebd9; /* Proper warm rich beige */
         background-image: 
-            radial-gradient(circle at 25% 20%, rgba(255, 255, 255, 0.95) 0%, transparent 60%),
-            radial-gradient(circle at 80% 80%, rgba(220, 200, 160, 0.2) 0%, transparent 50%),
+            radial-gradient(circle at 25% 20%, rgba(255, 255, 255, 0.8) 0%, transparent 60%),
+            radial-gradient(circle at 80% 80%, rgba(210, 185, 145, 0.3) 0%, transparent 50%),
             url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
         background-size: 100% 100%, 100% 100%, 200px 200px;
-        box-shadow: inset 0 0 150px rgba(180, 150, 100, 0.06);
+        box-shadow: inset 0 0 150px rgba(180, 150, 100, 0.05);
         transition: background-color 0.3s ease;
     }
 
     .dark .site-bg {
-        background-color: #0d1a14;
+        background-color: #06130d; /* Dark forest green velvet matching screenshot */
         background-image: 
-            radial-gradient(circle at 30% 20%, rgba(46, 115, 74, 0.2) 0%, transparent 60%),
-            radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.6) 0%, transparent 70%),
-            url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.12'/%3E%3C/svg%3E");
+            radial-gradient(circle at 30% 20%, rgba(16, 185, 129, 0.15) 0%, transparent 60%),
+            radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.7) 0%, transparent 70%),
+            url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
         background-size: 100% 100%, 100% 100%, 200px 200px;
-        box-shadow: inset 0 0 200px rgba(0,0,0,0.8);
+        box-shadow: inset 0 0 200px rgba(0,0,0,0.85);
     }
 }
 /* Google Translate Overrides */

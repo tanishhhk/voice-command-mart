@@ -463,17 +463,17 @@ function ProduceSection({ category, title }: { category: Product["category"], ti
 
                     {/* Running Low Smart Alert beside Fresh Vegetables */}
                     {title === "Fresh Vegetables" && runningLowItems.length > 0 && (
-                        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-100/90 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-700/60 text-amber-950 dark:text-amber-100 text-xs shadow-xs">
-                            <AlertCircle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 flex-shrink-0" />
+                        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-100/90 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-700/60 text-amber-950 dark:text-amber-100 text-xs shadow-xs">
+                            <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0" />
                             <span className="font-bold hidden md:inline text-amber-900 dark:text-amber-300">Running Low:</span>
-                            <span className="font-semibold truncate max-w-[140px] sm:max-w-[220px]">
+                            <span className="font-semibold truncate max-w-[200px] sm:max-w-[350px] md:max-w-[450px] lg:max-w-[550px]">
                                 {runningLowItems.map(i => i.product.name).join(", ")}
                             </span>
                             <button
                                 onClick={handleAddAllRunningLow}
-                                className="ml-1 px-2 py-0.5 rounded-md bg-amber-600 hover:bg-amber-700 text-white font-black text-[10px] sm:text-[11px] shadow-xs transition-transform hover:scale-105 active:scale-95 flex items-center gap-1"
+                                className="ml-1.5 px-2.5 py-1 rounded-md bg-amber-600 hover:bg-amber-700 text-white font-black text-[10px] sm:text-[11px] shadow-xs transition-transform hover:scale-105 active:scale-95 flex items-center gap-1.5"
                             >
-                                <ShoppingCart className="w-3 h-3" />
+                                <ShoppingCart className="w-3.5 h-3.5" />
                                 <span>Add All</span>
                             </button>
                         </div>
